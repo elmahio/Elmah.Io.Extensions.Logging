@@ -1,5 +1,8 @@
 # Elmah.Io.Extensions.Logging
 
+[![Build status](https://ci.appveyor.com/api/projects/status/eiw9tpstm67t02v6?svg=true)](https://ci.appveyor.com/project/ThomasArdal/elmah-io-extensions-logging)
+[![NuGet](https://img.shields.io/nuget/vpre/Elmah.Io.Extensions.Logging.svg)](https://www.nuget.org/packages/Elmah.Io.Extensions.Logging)
+
 Log to [elmah.io](https://elmah.io/) from [Microsoft.Extensions.Logging](https://github.com/aspnet/Logging).
 
 ## Installation
