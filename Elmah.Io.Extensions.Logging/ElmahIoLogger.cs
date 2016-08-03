@@ -29,7 +29,7 @@ namespace Elmah.Io.Extensions.Logging
  
          public bool IsEnabled(LogLevel logLevel)
          {
-             return logLevel == LogLevel.Critical || logLevel == LogLevel.Error || logLevel == LogLevel.Warning;
+             return logLevel != LogLevel.None;
          }
  
          public IDisposable BeginScope<TState>(TState state)
@@ -46,14 +46,20 @@ namespace Elmah.Io.Extensions.Logging
          {
              switch (logLevel)
              {
-                 case LogLevel.Warning:
+                case LogLevel.Critical:
+                    return Severity.Fatal;
+                case LogLevel.Debug:
+                    return Severity.Debug;
+                case LogLevel.Error:
+                    return Severity.Error;
+                case LogLevel.Information:
+                    return Severity.Information;
+                case LogLevel.Trace:
+                    return Severity.Verbose;
+                case LogLevel.Warning:
                      return Severity.Warning;
-                 case LogLevel.Error:
-                     return Severity.Error;
-                 case LogLevel.Critical:
-                     return Severity.Fatal;
                  default:
-                     throw new ArgumentException("Log level not supported: " + logLevel);
+                     return Severity.Information;
              }
          }
      }
