@@ -41,8 +41,7 @@ namespace Elmah.Io.Extensions.Logging
 
         public ILogger CreateLogger(string name)
         {
-            var lvl = FindLevel(name);
-            return new ElmahIoLogger(_apiKey, _logId, lvl);
+            return new ElmahIoLogger(_apiKey, _logId, FindLevel(name));
         }
 
         public void Dispose()
