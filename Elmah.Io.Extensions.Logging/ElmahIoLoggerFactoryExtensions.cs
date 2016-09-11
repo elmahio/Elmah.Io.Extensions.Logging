@@ -10,5 +10,11 @@ namespace Elmah.Io.Extensions.Logging
             factory.AddProvider(new ElmahIoLoggerProvider(apiKey, logId));
             return factory;
         }
+
+        public static ILoggerFactory AddElmahIoWithFilter(this ILoggerFactory factory, string apiKey, Guid logId, FilterLoggerSettings filter)
+        {
+            factory.AddProvider(new ElmahIoLoggerProvider(apiKey, logId, filter));
+            return factory;
+        }
     }
 }
