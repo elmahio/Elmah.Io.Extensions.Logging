@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2-*",
+  "version": "1.0.0-*",
   "description": "An elmah.io provider for Microsoft.Extensions.Logging",
   "authors": [ "elmah.io" ],
   "packOptions": {

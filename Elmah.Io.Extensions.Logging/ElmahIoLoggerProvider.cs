@@ -26,7 +26,7 @@ namespace Elmah.Io.Extensions.Logging
 
         private LogLevel FindLevel(string categoryName)
         {
-            var def = LogLevel.Trace;
+            var def = LogLevel.Debug;
             foreach (var s in _filter.Switches)
             {
                 if (categoryName.Contains(s.Key))
