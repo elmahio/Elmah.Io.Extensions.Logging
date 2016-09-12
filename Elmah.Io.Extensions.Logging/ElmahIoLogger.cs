@@ -11,11 +11,11 @@ namespace Elmah.Io.Extensions.Logging
         private readonly LogLevel _level;
 
         public ElmahIoLogger(string apiKey, Guid logId, LogLevel level)
-         {
-             _logId = logId;
-             _level = level;
-             _elmahioApi = ElmahioAPI.Create(apiKey);
-         }
+        {
+            _logId = logId;
+            _level = level;
+            _elmahioApi = ElmahioAPI.Create(apiKey);
+        }
  
          public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
          {

@@ -18,7 +18,7 @@ namespace Elmah.Io.Extensions.Logging
             {
                 filter = new FilterLoggerSettings
                 {
-                    {"*", LogLevel.Trace}
+                    {"*", LogLevel.Warning}
                 };
             }
             _filter = filter;
@@ -26,7 +26,7 @@ namespace Elmah.Io.Extensions.Logging
 
         private LogLevel FindLevel(string categoryName)
         {
-            var def = LogLevel.Debug;
+            var def = LogLevel.Warning;
             foreach (var s in _filter.Switches)
             {
                 if (categoryName.Contains(s.Key))
