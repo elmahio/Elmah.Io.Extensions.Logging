@@ -6,14 +6,16 @@ namespace Elmah.Io.Extensions.Logging
 {
     public class ElmahIoLogger : ILogger
      {
-         private readonly IElmahioAPI _elmahioApi;
-         private readonly Guid _logId;
- 
-         public ElmahIoLogger(string apiKey, Guid logId)
-         {
-             _logId = logId;
-             _elmahioApi = ElmahioAPI.Create(apiKey);
-         }
+        private readonly IElmahioAPI _elmahioApi;
+        private readonly Guid _logId;
+        private readonly LogLevel _level;
+
+        public ElmahIoLogger(string apiKey, Guid logId, LogLevel level)
+        {
+            _logId = logId;
+            _level = level;
+            _elmahioApi = ElmahioAPI.Create(apiKey);
+        }
  
          public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
          {
@@ -29,7 +31,7 @@ namespace Elmah.Io.Extensions.Logging
  
          public bool IsEnabled(LogLevel logLevel)
          {
-             return logLevel != LogLevel.None;
+            return logLevel > _level;
          }
  
          public IDisposable BeginScope<TState>(TState state)

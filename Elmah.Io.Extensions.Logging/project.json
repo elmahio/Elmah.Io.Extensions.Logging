@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "description": "An elmah.io provider for Microsoft.Extensions.Logging",
   "authors": [ "elmah.io" ],
@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "Elmah.Io.Client": "3.0.0-pre-21",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0"
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
+    "Microsoft.Extensions.Logging.Filter": "1.0.0"
   },
 
   "frameworks": {
