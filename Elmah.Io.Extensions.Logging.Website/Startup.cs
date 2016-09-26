@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +34,13 @@ namespace Elmah.Io.Extensions.Logging.Website
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             loggerFactory.AddElmahIo("API_KEY", new Guid("LOG_ID"));
+
+            // As default, the Microsoft.Extensions.Logging implementation for elmah.io only logs warnings, errors and criticals.
+            // To log other log levels, create a FilterLoggerSettings as shown in the following example:
+            //loggerFactory.AddElmahIo("API_KEY", new Guid("LOG_ID"), new FilterLoggerSettings
+            //{
+            //    {"*", LogLevel.Information}
+            //});
 
             if (env.IsDevelopment())
             {

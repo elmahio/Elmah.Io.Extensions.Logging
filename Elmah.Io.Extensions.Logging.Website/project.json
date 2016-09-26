@@ -20,7 +20,7 @@
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
-    "Elmah.Io.Extensions.Logging": "1.0.0-pre-8"
+    "Elmah.Io.Extensions.Logging": "1.0.0-*"
   },
 
   "tools": {
