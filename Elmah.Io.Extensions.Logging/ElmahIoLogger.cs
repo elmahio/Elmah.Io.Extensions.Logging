@@ -31,7 +31,7 @@ namespace Elmah.Io.Extensions.Logging
  
          public bool IsEnabled(LogLevel logLevel)
          {
-            return logLevel > _level;
+            return logLevel >= _level;
          }
  
          public IDisposable BeginScope<TState>(TState state)
