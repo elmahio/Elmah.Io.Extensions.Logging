@@ -39,7 +39,7 @@ namespace Elmah.Io.Extensions.Logging.Website
             // To log other log levels, create a FilterLoggerSettings as shown in the following example:
             //loggerFactory.AddElmahIo("API_KEY", new Guid("LOG_ID"), new FilterLoggerSettings
             //{
-            //    {"*", LogLevel.Information}
+            //    {"elmah.io", LogLevel.Information}
             //});
 
             if (env.IsDevelopment())

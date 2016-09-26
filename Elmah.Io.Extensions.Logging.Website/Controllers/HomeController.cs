@@ -6,11 +6,11 @@ namespace Elmah.Io.Extensions.Logging.Website.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILoggerFactory factory)
         {
-            _logger = logger;
+            _logger = factory.CreateLogger("elmah.io");
         }
 
         public IActionResult Index()
