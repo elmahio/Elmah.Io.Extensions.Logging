@@ -11,11 +11,13 @@ namespace Elmah.Io.Extensions.Logging
         private readonly Guid _logId;
         private readonly LogLevel _level;
 
-        public ElmahIoLogger(string apiKey, Guid logId, LogLevel level)
+        public ElmahIoLogger(string apiKey, Guid logId, LogLevel level, ElmahIoProviderOptions options)
         {
             _logId = logId;
             _level = level;
             _elmahioApi = ElmahioAPI.Create(apiKey);
+            _elmahioApi.Messages.OnMessage += (sender, args) => options.OnMessage?.Invoke(args.Message);
+            _elmahioApi.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -41,7 +43,7 @@ namespace Elmah.Io.Extensions.Logging
                 createMessage.Type = exception.GetType().Name;
             }
 
-            _elmahioApi.Messages.Create(_logId.ToString(), createMessage);
+            _elmahioApi.Messages.CreateAndNotify(_logId, createMessage);
         }
 
         public bool IsEnabled(LogLevel logLevel)

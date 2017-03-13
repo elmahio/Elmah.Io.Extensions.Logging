@@ -33,14 +33,26 @@ namespace Elmah.Io.Extensions.Logging.Website
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            loggerFactory.AddElmahIo("a452c82f4dc0461b92dbefd49d024f03", new Guid("3f877411-9a9e-4f10-8ba6-c0c340a7e5d4"));
+            loggerFactory.AddElmahIo("API_KEY", new Guid("LOG_ID"));
 
-            // As default, the Microsoft.Extensions.Logging implementation for elmah.io only logs warnings, errors and criticals.
-            // To log other log levels, create a FilterLoggerSettings as shown in the following example:
-            //loggerFactory.AddElmahIo("API_KEY", new Guid("LOG_ID"), new FilterLoggerSettings
-            //{
-            //    {"elmah.io", LogLevel.Information}
-            //});
+            // The following example show two things:
+            // 1. As default, the Microsoft.Extensions.Logging implementation for elmah.io, only logs warnings, errors and criticals.
+            //    To log other log levels, create a FilterLoggerSettings as shown in the following example.
+            // 2. To hook into the pipeline of logging a message to elmah.io, implement the OnMessage and OnError actions
+            //loggerFactory.AddElmahIo(
+            //    "API_KEY",
+            //    new Guid("LOG_ID"),
+            //    new FilterLoggerSettings
+            //    {
+            //        {"elmah.io", LogLevel.Information}
+            //    },
+            //    new ElmahIoProviderOptions
+            //    {
+            //        OnMessage = msg =>
+            //        {
+            //            msg.Version = "1.0.0";
+            //        }
+            //    });
 
             if (env.IsDevelopment())
             {

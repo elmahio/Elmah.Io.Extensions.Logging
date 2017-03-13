@@ -8,8 +8,9 @@ namespace Elmah.Io.Extensions.Logging
         private readonly string _apiKey;
         private readonly Guid _logId;
         private readonly FilterLoggerSettings _filter;
+        private readonly ElmahIoProviderOptions _options;
 
-        public ElmahIoLoggerProvider(string apiKey, Guid logId, FilterLoggerSettings filter = null)
+        public ElmahIoLoggerProvider(string apiKey, Guid logId, FilterLoggerSettings filter = null, ElmahIoProviderOptions options = null)
         {
             _apiKey = apiKey;
             _logId = logId;
@@ -22,6 +23,8 @@ namespace Elmah.Io.Extensions.Logging
                 };
             }
             _filter = filter;
+
+            _options = options ?? new ElmahIoProviderOptions();
         }
 
         private LogLevel FindLevel(string categoryName)
@@ -41,7 +44,7 @@ namespace Elmah.Io.Extensions.Logging
 
         public ILogger CreateLogger(string name)
         {
-            return new ElmahIoLogger(_apiKey, _logId, FindLevel(name));
+            return new ElmahIoLogger(_apiKey, _logId, FindLevel(name), _options);
         }
 
         public void Dispose()
