@@ -250,3 +250,5 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+samples/Elmah.Io.Extensions.Logging.Website/wwwroot
