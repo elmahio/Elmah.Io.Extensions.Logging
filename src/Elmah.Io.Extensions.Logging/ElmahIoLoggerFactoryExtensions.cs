@@ -7,10 +7,17 @@ namespace Elmah.Io.Extensions.Logging
     {
         public static ILoggerFactory AddElmahIo(this ILoggerFactory factory, string apiKey, Guid logId)
         {
-            factory.AddProvider(new ElmahIoLoggerProvider(apiKey, logId));
+            factory.AddProvider(new ElmahIoLoggerProvider(apiKey, logId, null));
             return factory;
         }
 
+        public static ILoggerFactory AddElmahIo(this ILoggerFactory factory, string apiKey, Guid logId, ElmahIoProviderOptions options)
+        {
+            factory.AddProvider(new ElmahIoLoggerProvider(apiKey, logId, options));
+            return factory;
+        }
+
+#if NETSTANDARD1_1
         public static ILoggerFactory AddElmahIo(this ILoggerFactory factory, string apiKey, Guid logId, FilterLoggerSettings filter)
         {
             factory.AddProvider(new ElmahIoLoggerProvider(apiKey, logId, filter));
@@ -22,5 +29,6 @@ namespace Elmah.Io.Extensions.Logging
             factory.AddProvider(new ElmahIoLoggerProvider(apiKey, logId, filter, options));
             return factory;
         }
+#endif
     }
 }

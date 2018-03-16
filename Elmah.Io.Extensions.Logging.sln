@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FD99DC60-3A98-4D99-9E71-8C8C2C81530D}"
 EndProject
@@ -17,7 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.EntityFrameworkCore", "samples\Elmah.Io.Extensions.Logging.EntityFrameworkCore\Elmah.Io.Extensions.Logging.EntityFrameworkCore.csproj", "{990D27B4-C8D1-493F-9947-03C295C9FC10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.EntityFrameworkCore", "samples\Elmah.Io.Extensions.Logging.EntityFrameworkCore\Elmah.Io.Extensions.Logging.EntityFrameworkCore.csproj", "{990D27B4-C8D1-493F-9947-03C295C9FC10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.AspNetCore2", "samples\Elmah.Io.Extensions.Logging.AspNetCore2\Elmah.Io.Extensions.Logging.AspNetCore2.csproj", "{8DB0EAF6-B4D7-44F5-A6B5-6165AD2E285D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.ConsoleCore2", "samples\Elmah.Io.Extensions.Logging.ConsoleCore2\Elmah.Io.Extensions.Logging.ConsoleCore2.csproj", "{C8A8C275-2726-43C6-97A0-63C1CE8E3269}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,14 @@ Global
 		{990D27B4-C8D1-493F-9947-03C295C9FC10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990D27B4-C8D1-493F-9947-03C295C9FC10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{990D27B4-C8D1-493F-9947-03C295C9FC10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DB0EAF6-B4D7-44F5-A6B5-6165AD2E285D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DB0EAF6-B4D7-44F5-A6B5-6165AD2E285D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DB0EAF6-B4D7-44F5-A6B5-6165AD2E285D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DB0EAF6-B4D7-44F5-A6B5-6165AD2E285D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A8C275-2726-43C6-97A0-63C1CE8E3269}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A8C275-2726-43C6-97A0-63C1CE8E3269}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A8C275-2726-43C6-97A0-63C1CE8E3269}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A8C275-2726-43C6-97A0-63C1CE8E3269}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +57,8 @@ Global
 		{FB7C0604-0BD2-4D76-9081-0063E53B20A2} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{99357B19-04B9-4FAC-8D3E-51E0CC880372} = {FD99DC60-3A98-4D99-9E71-8C8C2C81530D}
 		{990D27B4-C8D1-493F-9947-03C295C9FC10} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
+		{8DB0EAF6-B4D7-44F5-A6B5-6165AD2E285D} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
+		{C8A8C275-2726-43C6-97A0-63C1CE8E3269} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77575286-A290-4053-8F11-8CACBFFE7B9B}
