@@ -10,8 +10,14 @@ namespace Elmah.Io.Extensions.Logging
     {
         public static ILoggingBuilder AddElmahIo(this ILoggingBuilder builder, Action<ElmahIoProviderOptions> configure)
         {
-            builder.Services.AddSingleton<ILoggerProvider, ElmahIoLoggerProvider>();
+            builder.AddElmahIo();
             builder.Services.Configure(configure);
+            return builder;
+        }
+
+        public static ILoggingBuilder AddElmahIo(this ILoggingBuilder builder)
+        {
+            builder.Services.AddSingleton<ILoggerProvider, ElmahIoLoggerProvider>();
             return builder;
         }
     }

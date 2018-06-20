@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Elmah.Io.Extensions.Logging.AspNetCore2
@@ -17,8 +18,15 @@ namespace Elmah.Io.Extensions.Logging.AspNetCore2
                 .UseStartup<Startup>()
                 .ConfigureLogging((ctx, logging) =>
                 {
-                    // Use the following line to configure the elmah.io provider from appsettings
+                    // Use the following to configure API key and log ID in appsettings.json
+                    //logging.Services.Configure<ElmahIoProviderOptions>(ctx.Configuration.GetSection("ElmahIo"));
+
+                    // Use the following line to configure elmah.io provider settings like log level from appsettings.json
                     //logging.AddConfiguration(ctx.Configuration.GetSection("Logging"));
+
+                    // If everything is configured in appsettings.json, call the AddElmahIo overload without an options action
+                    //logging.AddElmahIo();
+
                     logging
                         .AddElmahIo(options =>
                         {
@@ -30,6 +38,7 @@ namespace Elmah.Io.Extensions.Logging.AspNetCore2
                             //    msg.Version = "2.0.0";
                             //};
                         });
+
                     // The elmah.io provider can log any log level, but we recommend only to log warning and up
                     logging.AddFilter<ElmahIoLoggerProvider>(null, LogLevel.Warning);
                 })
