@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
 using Microsoft.Extensions.Logging;
@@ -7,6 +10,7 @@ namespace Elmah.Io.Extensions.Logging
 {
     public class ElmahIoLogger : ILogger
     {
+        private const string OriginalFormatPropertyKey = "{OriginalFormat}";
         private readonly IElmahioAPI _elmahioApi;
         private readonly Guid _logId;
 #if NETSTANDARD1_1
@@ -49,17 +53,106 @@ namespace Elmah.Io.Extensions.Logging
             {
                 DateTime = DateTime.UtcNow,
                 Title = message,
-                Severity = LogLevelToSeverity(logLevel).ToString()
+                Severity = LogLevelToSeverity(logLevel).ToString(),
             };
+
+            var properties = new List<Item>();
+            if (state is IEnumerable<KeyValuePair<string, object>> stateProperties)
+            {
+                foreach (var stateProperty in stateProperties.Where(prop => prop.Key != OriginalFormatPropertyKey))
+                {
+                    properties.Add(new Item { Key = stateProperty.Key, Value = stateProperty.Value?.ToString() });
+                }
+            }
+
+            createMessage.Source = Source(properties, exception);
+            createMessage.Hostname = Hostname(properties);
+            createMessage.Application = Application(properties);
+            createMessage.User = User(properties);
+            createMessage.Method = Method(properties);
+            createMessage.Version = Version(properties);
+            createMessage.Url = Url(properties);
+            createMessage.Type = Type(properties, exception);
+            createMessage.StatusCode = StatusCode(properties);
+            createMessage.Detail = exception?.ToString();
+            createMessage.Data = properties;
             if (exception != null)
             {
-                createMessage.Detail = exception.ToString();
-                createMessage.Data = exception.ToDataList();
-                createMessage.Type = exception.GetBaseException().GetType().Name;
-                createMessage.Source = exception.GetBaseException().Source;
+                foreach (var item in exception.ToDataList())
+                {
+                    createMessage.Data.Add(item);
+                }
             }
 
             _elmahioApi.Messages.CreateAndNotify(_logId, createMessage);
+        }
+
+        private int? StatusCode(List<Item> properties)
+        {
+            var statusCode = properties.FirstOrDefault(p => p.Key.ToLower() == "statuscode");
+            if (statusCode == null || string.IsNullOrWhiteSpace(statusCode.Value)) return null;
+            if (!int.TryParse(statusCode.Value.ToString(), out int code)) return null;
+            return code;
+        }
+
+        private string Type(List<Item> properties, Exception exception)
+        {
+            var type = properties.FirstOrDefault(p => p.Key.ToLower() == "type");
+            if (type != null) return type.Value?.ToString();
+            return exception?.GetBaseException().GetType().Name;
+        }
+
+        private string Url(List<Item> properties)
+        {
+            var url = properties.FirstOrDefault(p => p.Key.ToLower() == "url");
+            return url?.Value?.ToString();
+        }
+
+        private string Version(List<Item> properties)
+        {
+            var version = properties.FirstOrDefault(p => p.Key.ToLower() == "version");
+            return version?.Value?.ToString();
+        }
+
+        private string Method(List<Item> properties)
+        {
+            var method = properties.FirstOrDefault(p => p.Key.ToLower() == "method");
+            return method?.Value?.ToString();
+        }
+
+        private string User(List<Item> properties)
+        {
+            var user = properties.FirstOrDefault(p => p.Key.ToLower() == "user");
+            if (user != null) return user.Value?.ToString();
+#if ISTWOZERO
+            return Thread.CurrentPrincipal?.Identity?.Name;
+#else
+            return null;
+#endif
+        }
+
+        private string Application(List<Item> properties)
+        {
+            var application = properties.FirstOrDefault(p => p.Key.ToLower() == "application");
+            return application?.Value?.ToString();
+        }
+
+        private string Hostname(List<Item> properties)
+        {
+            var hostname = properties.FirstOrDefault(p => p.Key.ToLower() == "hostname");
+            if (hostname != null) return hostname.Value?.ToString();
+#if ISTWOZERO
+            return Environment.MachineName;
+#else
+            return null;
+#endif
+        }
+
+        private string Source(List<Item> properties, Exception exception)
+        {
+            var source = properties.FirstOrDefault(p => p.Key.ToLower() == "source");
+            if (source != null) return source.Value?.ToString();
+            return exception?.GetBaseException().Source;
         }
 
         public bool IsEnabled(LogLevel logLevel)
