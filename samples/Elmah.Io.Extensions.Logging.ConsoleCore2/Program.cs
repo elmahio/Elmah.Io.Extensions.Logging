@@ -11,8 +11,8 @@ namespace Elmah.Io.Extensions.Logging.ConsoleCore2
             var services = new ServiceCollection();
             services.AddLogging(logging => logging.AddElmahIo(options =>
             {
-                options.ApiKey = "23035d18305a4632874628dbb976d1ac";
-                options.LogId = new Guid("b4cb36a9-a272-45e8-8ca6-a48e1728a8d5");
+                options.ApiKey = "API_KEY";
+                options.LogId = new Guid("LOG_ID");
             }));
 
             var loggerFactory = services.BuildServiceProvider().GetService<ILoggerFactory>();
