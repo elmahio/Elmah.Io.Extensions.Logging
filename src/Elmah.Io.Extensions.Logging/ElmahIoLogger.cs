@@ -55,7 +55,8 @@ namespace Elmah.Io.Extensions.Logging
             {
                 createMessage.Detail = exception.ToString();
                 createMessage.Data = exception.ToDataList();
-                createMessage.Type = exception.GetType().Name;
+                createMessage.Type = exception.GetBaseException().GetType().Name;
+                createMessage.Source = exception.GetBaseException().Source;
             }
 
             _elmahioApi.Messages.CreateAndNotify(_logId, createMessage);

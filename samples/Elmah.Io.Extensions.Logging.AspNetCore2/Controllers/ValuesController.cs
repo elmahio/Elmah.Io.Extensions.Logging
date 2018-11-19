@@ -27,8 +27,9 @@ namespace Elmah.Io.Extensions.Logging.AspNetCore2.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            _logger.LogError("Error");
-
+            var i = 0;
+            var result = 42 / i;
+            
             return "value";
         }
 
