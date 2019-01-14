@@ -57,11 +57,17 @@ namespace Elmah.Io.Extensions.Logging
             };
 
             var properties = new List<Item>();
+            var serverVariables = new List<Item>();
             if (state is IEnumerable<KeyValuePair<string, object>> stateProperties)
             {
                 foreach (var stateProperty in stateProperties.Where(prop => prop.Key != OriginalFormatPropertyKey))
                 {
-                    properties.Add(new Item { Key = stateProperty.Key, Value = stateProperty.Value?.ToString() });
+                    if (string.Equals(stateProperty.Key, "ServerVariables", StringComparison.OrdinalIgnoreCase))
+                    {
+                        serverVariables = ToItemList(stateProperty.Value);
+                    }
+
+                    properties.Add(ToItem(stateProperty));
                 }
             }
 
@@ -75,6 +81,7 @@ namespace Elmah.Io.Extensions.Logging
             createMessage.Type = Type(properties, exception);
             createMessage.StatusCode = StatusCode(properties);
             createMessage.Detail = exception?.ToString();
+            createMessage.ServerVariables = serverVariables;
             createMessage.Data = properties;
             if (exception != null)
             {
@@ -188,6 +195,23 @@ namespace Elmah.Io.Extensions.Logging
                 default:
                     return Severity.Information;
             }
+        }
+
+        private List<Item> ToItemList(object value)
+        {
+            List<Item> result = new List<Item>();
+
+            if (value is IEnumerable<KeyValuePair<string, object>> properties)
+            {
+                result = properties.Select(p => ToItem(p)).ToList();
+            }
+
+            return result;
+        }
+
+        private Item ToItem(KeyValuePair<string, object> property)
+        {
+            return new Item() { Key = property.Key, Value = property.Value?.ToString() };
         }
     }
 }
