@@ -1,4 +1,4 @@
-version: 3.3.{build}
+version: 3.4.{build}-pre
 branches:
   only:
   - master
@@ -9,7 +9,10 @@ build:
   verbosity: minimal
 after_build:
 - ps: dotnet pack /p:Version=$env:APPVEYOR_BUILD_VERSION src\Elmah.Io.Extensions.Logging\Elmah.Io.Extensions.Logging.csproj --output artifacts
-test: off
+test:
+  assemblies:
+    only:
+    - test\Elmah.Io.Extensions.Logging.Test\bin\**\Elmah.Io.Extensions.Logging.Test.dll
 artifacts:
 - path: '**\*.nupkg'
 deploy:

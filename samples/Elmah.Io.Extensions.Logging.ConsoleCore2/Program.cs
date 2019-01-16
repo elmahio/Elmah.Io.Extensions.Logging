@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace Elmah.Io.Extensions.Logging.ConsoleCore2
 {
@@ -18,9 +19,9 @@ namespace Elmah.Io.Extensions.Logging.ConsoleCore2
             var loggerFactory = services.BuildServiceProvider().GetService<ILoggerFactory>();
             var logger = loggerFactory.CreateLogger("elmah.io");
             logger.LogInformation("Hello World");
-            logger.LogInformation("A message with {type} {hostname} {application} {user} {source} {method} {version} {url} and {statusCode}",
+            logger.LogInformation("A message with {type} {hostname} {application} {user} {source} {method} {version} {url} {statusCode} and {serverVariables}",
                 "custom type", "custom hostname", "custom application", "custom user", "custom source", "custom method",
-                "custom version", "custom url", 500);
+                "custom version", "custom url", 500, new Dictionary<string, object> { { "UserAgent", "Me" } });
         }
     }
 }

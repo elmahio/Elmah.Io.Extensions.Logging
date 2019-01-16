@@ -39,6 +39,11 @@ namespace Elmah.Io.Extensions.Logging
         }
 #endif
 
+        internal ElmahIoLogger(IElmahioAPI api)
+        {
+            _elmahioApi = api;
+        }
+
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             if (formatter == null)
@@ -54,37 +59,41 @@ namespace Elmah.Io.Extensions.Logging
                 DateTime = DateTime.UtcNow,
                 Title = message,
                 Severity = LogLevelToSeverity(logLevel).ToString(),
+                Data = new List<Item>(),
             };
 
-            var properties = new List<Item>();
-            var serverVariables = new List<Item>();
             if (state is IEnumerable<KeyValuePair<string, object>> stateProperties)
             {
+                // Fill in fields by looking at properties provided by MEL.
+                // Properties than we cannot map to elmah.io fields, are added to the Data tab.
                 foreach (var stateProperty in stateProperties.Where(prop => prop.Key != OriginalFormatPropertyKey))
                 {
-                    if (string.Equals(stateProperty.Key, "ServerVariables", StringComparison.OrdinalIgnoreCase))
-                    {
-                        serverVariables = ToItemList(stateProperty.Value);
-                    }
-
-                    properties.Add(ToItem(stateProperty));
+                    if (stateProperty.IsStatusCode(out int? statusCode)) createMessage.StatusCode = statusCode.Value;
+                    else if (stateProperty.IsApplication(out string application)) createMessage.Application = application;
+                    else if (stateProperty.IsSource(out string source)) createMessage.Source = source;
+                    else if (stateProperty.IsHostname(out string hostname)) createMessage.Hostname = hostname;
+                    else if (stateProperty.IsUser(out string user)) createMessage.User = user;
+                    else if (stateProperty.IsMethod(out string method)) createMessage.Method = method;
+                    else if (stateProperty.IsVersion(out string version)) createMessage.Version = version;
+                    else if (stateProperty.IsUrl(out string url)) createMessage.Url = url;
+                    else if (stateProperty.IsType(out string type)) createMessage.Type = type;
+                    else if (stateProperty.IsServerVariables(out List<Item> serverVariables)) createMessage.ServerVariables = serverVariables;
+                    else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
+                    else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;
+                    else if (stateProperty.IsQueryString(out List<Item> queryString)) createMessage.QueryString = queryString;
+                    else createMessage.Data.Add(stateProperty.ToItem());
                 }
             }
 
-            createMessage.Source = Source(properties, exception);
-            createMessage.Hostname = Hostname(properties);
-            createMessage.Application = Application(properties);
-            createMessage.User = User(properties);
-            createMessage.Method = Method(properties);
-            createMessage.Version = Version(properties);
-            createMessage.Url = Url(properties);
-            createMessage.Type = Type(properties, exception);
-            createMessage.StatusCode = StatusCode(properties);
-            createMessage.Detail = exception?.ToString();
-            createMessage.ServerVariables = serverVariables;
-            createMessage.Data = properties;
+            // Fill in as many blanks as we can by looking at environment variables, etc.
+            if (string.IsNullOrWhiteSpace(createMessage.Source)) createMessage.Source = Source(exception);
+            if (string.IsNullOrWhiteSpace(createMessage.Hostname)) createMessage.Hostname = Hostname();
+            if (string.IsNullOrWhiteSpace(createMessage.User)) createMessage.User = User();
+            if (string.IsNullOrWhiteSpace(createMessage.Type)) createMessage.Type = Type(exception);
+
             if (exception != null)
             {
+                createMessage.Detail = exception.ToString();
                 foreach (var item in exception.ToDataList())
                 {
                     createMessage.Data.Add(item);
@@ -94,43 +103,13 @@ namespace Elmah.Io.Extensions.Logging
             _elmahioApi.Messages.CreateAndNotify(_logId, createMessage);
         }
 
-        private int? StatusCode(List<Item> properties)
+        private string Type(Exception exception)
         {
-            var statusCode = properties.FirstOrDefault(p => p.Key.ToLower() == "statuscode");
-            if (statusCode == null || string.IsNullOrWhiteSpace(statusCode.Value)) return null;
-            if (!int.TryParse(statusCode.Value.ToString(), out int code)) return null;
-            return code;
-        }
-
-        private string Type(List<Item> properties, Exception exception)
-        {
-            var type = properties.FirstOrDefault(p => p.Key.ToLower() == "type");
-            if (type != null) return type.Value?.ToString();
             return exception?.GetBaseException().GetType().Name;
         }
 
-        private string Url(List<Item> properties)
+        private string User()
         {
-            var url = properties.FirstOrDefault(p => p.Key.ToLower() == "url");
-            return url?.Value?.ToString();
-        }
-
-        private string Version(List<Item> properties)
-        {
-            var version = properties.FirstOrDefault(p => p.Key.ToLower() == "version");
-            return version?.Value?.ToString();
-        }
-
-        private string Method(List<Item> properties)
-        {
-            var method = properties.FirstOrDefault(p => p.Key.ToLower() == "method");
-            return method?.Value?.ToString();
-        }
-
-        private string User(List<Item> properties)
-        {
-            var user = properties.FirstOrDefault(p => p.Key.ToLower() == "user");
-            if (user != null) return user.Value?.ToString();
 #if ISTWOZERO
             return Thread.CurrentPrincipal?.Identity?.Name;
 #else
@@ -138,16 +117,8 @@ namespace Elmah.Io.Extensions.Logging
 #endif
         }
 
-        private string Application(List<Item> properties)
+        private string Hostname()
         {
-            var application = properties.FirstOrDefault(p => p.Key.ToLower() == "application");
-            return application?.Value?.ToString();
-        }
-
-        private string Hostname(List<Item> properties)
-        {
-            var hostname = properties.FirstOrDefault(p => p.Key.ToLower() == "hostname");
-            if (hostname != null) return hostname.Value?.ToString();
 #if ISTWOZERO
             return Environment.MachineName;
 #else
@@ -155,10 +126,8 @@ namespace Elmah.Io.Extensions.Logging
 #endif
         }
 
-        private string Source(List<Item> properties, Exception exception)
+        private string Source(Exception exception)
         {
-            var source = properties.FirstOrDefault(p => p.Key.ToLower() == "source");
-            if (source != null) return source.Value?.ToString();
             return exception?.GetBaseException().Source;
         }
 
@@ -195,23 +164,6 @@ namespace Elmah.Io.Extensions.Logging
                 default:
                     return Severity.Information;
             }
-        }
-
-        private List<Item> ToItemList(object value)
-        {
-            List<Item> result = new List<Item>();
-
-            if (value is IEnumerable<KeyValuePair<string, object>> properties)
-            {
-                result = properties.Select(p => ToItem(p)).ToList();
-            }
-
-            return result;
-        }
-
-        private Item ToItem(KeyValuePair<string, object> property)
-        {
-            return new Item() { Key = property.Key, Value = property.Value?.ToString() };
         }
     }
 }
