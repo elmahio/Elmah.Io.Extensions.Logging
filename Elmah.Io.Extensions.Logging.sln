@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0ECA6599-92E4-46B6-9ED4-C2C2028E3404}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.Test", "test\Elmah.Io.Extensions.Logging.Test\Elmah.Io.Extensions.Logging.Test.csproj", "{BDDAF225-15D9-40C4-BE56-A31D182734B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.Test", "test\Elmah.Io.Extensions.Logging.Test\Elmah.Io.Extensions.Logging.Test.csproj", "{9F210C4D-644E-4F5D-A050-24DF0EF08E3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,10 +59,10 @@ Global
 		{433D6D59-21AA-4D52-96B4-BC045E3CF6EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{433D6D59-21AA-4D52-96B4-BC045E3CF6EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{433D6D59-21AA-4D52-96B4-BC045E3CF6EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDDAF225-15D9-40C4-BE56-A31D182734B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDDAF225-15D9-40C4-BE56-A31D182734B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDDAF225-15D9-40C4-BE56-A31D182734B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDDAF225-15D9-40C4-BE56-A31D182734B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F210C4D-644E-4F5D-A050-24DF0EF08E3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F210C4D-644E-4F5D-A050-24DF0EF08E3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F210C4D-644E-4F5D-A050-24DF0EF08E3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F210C4D-644E-4F5D-A050-24DF0EF08E3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,7 +74,7 @@ Global
 		{8DB0EAF6-B4D7-44F5-A6B5-6165AD2E285D} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{C8A8C275-2726-43C6-97A0-63C1CE8E3269} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{433D6D59-21AA-4D52-96B4-BC045E3CF6EC} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
-		{BDDAF225-15D9-40C4-BE56-A31D182734B2} = {0ECA6599-92E4-46B6-9ED4-C2C2028E3404}
+		{9F210C4D-644E-4F5D-A050-24DF0EF08E3D} = {0ECA6599-92E4-46B6-9ED4-C2C2028E3404}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77575286-A290-4053-8F11-8CACBFFE7B9B}
