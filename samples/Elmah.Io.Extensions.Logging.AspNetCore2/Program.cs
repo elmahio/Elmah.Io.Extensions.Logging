@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,11 +33,15 @@ namespace Elmah.Io.Extensions.Logging.AspNetCore2
                         {
                             options.ApiKey = "API_KEY";
                             options.LogId = new Guid("LOG_ID");
+                            
                             // Additional options can be configured like this:
                             //options.OnMessage = msg =>
                             //{
                             //    msg.Version = "2.0.0";
                             //};
+
+                            // Remove comment on the following line to log through a proxy (in this case Fiddler).
+                            //options.WebProxy = new WebProxy("localhost", 8888);
                         });
 
                     // The elmah.io provider can log any log level, but we recommend only to log warning and up

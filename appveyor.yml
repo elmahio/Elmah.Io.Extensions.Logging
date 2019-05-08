@@ -1,4 +1,4 @@
-version: 3.4.{build}
+version: 3.5.{build}-pre
 branches:
   only:
   - master
@@ -18,4 +18,4 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: zW5wpse6lUxytGy97A4zTL4QmmIy0+Xws97OQsbxBYL69HUUnO73vlaGKd6A8Nzo
+    secure: 9XpSybqiIbTFiTdfkpUaBSMdLFCm4yx/MYR7KtYbV18g5gP5L6U8bhhOPfi/56o+

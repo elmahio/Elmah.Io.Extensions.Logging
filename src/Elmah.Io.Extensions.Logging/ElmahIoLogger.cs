@@ -16,15 +16,13 @@ namespace Elmah.Io.Extensions.Logging
 #if NETSTANDARD1_1
         private readonly LogLevel _level;
 #endif
-        private readonly ElmahIoProviderOptions _options;
 
         public ElmahIoLogger(string apiKey, Guid logId, ElmahIoProviderOptions options)
         {
             _logId = logId;
-            _elmahioApi = ElmahioAPI.Create(apiKey);
+            _elmahioApi = new ElmahioAPI(new ApiKeyCredentials(apiKey), HttpClientHandlerFactory.GetHttpClientHandler(options));
             _elmahioApi.Messages.OnMessage += (sender, args) => options.OnMessage?.Invoke(args.Message);
             _elmahioApi.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
-            _options = options;
         }
 
 #if NETSTANDARD1_1
@@ -35,7 +33,6 @@ namespace Elmah.Io.Extensions.Logging
             _elmahioApi = ElmahioAPI.Create(apiKey);
             _elmahioApi.Messages.OnMessage += (sender, args) => options.OnMessage?.Invoke(args.Message);
             _elmahioApi.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
-            _options = options;
         }
 #endif
 
