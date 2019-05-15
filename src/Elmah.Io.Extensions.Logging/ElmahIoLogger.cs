@@ -102,7 +102,7 @@ namespace Elmah.Io.Extensions.Logging
 
         private string Type(Exception exception)
         {
-            return exception?.GetBaseException().GetType().Name;
+            return exception?.GetBaseException().GetType().FullName;
         }
 
         private string User()
