@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading;
 using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
@@ -10,6 +12,7 @@ namespace Elmah.Io.Extensions.Logging
 {
     public class ElmahIoLogger : ILogger
     {
+        internal static string _assemblyVersion = typeof(ElmahIoLogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
         private const string OriginalFormatPropertyKey = "{OriginalFormat}";
         private readonly IElmahioAPI _elmahioApi;
         private readonly Guid _logId;
@@ -20,19 +23,22 @@ namespace Elmah.Io.Extensions.Logging
         public ElmahIoLogger(string apiKey, Guid logId, ElmahIoProviderOptions options)
         {
             _logId = logId;
-            _elmahioApi = new ElmahioAPI(new ApiKeyCredentials(apiKey), HttpClientHandlerFactory.GetHttpClientHandler(options));
-            _elmahioApi.Messages.OnMessage += (sender, args) => options.OnMessage?.Invoke(args.Message);
-            _elmahioApi.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
+            var api = new ElmahioAPI(new ApiKeyCredentials(apiKey), HttpClientHandlerFactory.GetHttpClientHandler(new ElmahIoOptions
+            {
+                WebProxy = options.WebProxy
+            }));
+            api.HttpClient.Timeout = new TimeSpan(0, 0, 5);
+            api.HttpClient.DefaultRequestHeaders.UserAgent.Clear();
+            api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)));
+            api.Messages.OnMessage += (sender, args) => options.OnMessage?.Invoke(args.Message);
+            api.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
+            _elmahioApi = api;
         }
 
 #if NETSTANDARD1_1
-        public ElmahIoLogger(string apiKey, Guid logId, LogLevel level, ElmahIoProviderOptions options)
+        public ElmahIoLogger(string apiKey, Guid logId, LogLevel level, ElmahIoProviderOptions options) : this(apiKey, logId, options)
         {
-            _logId = logId;
             _level = level;
-            _elmahioApi = ElmahioAPI.Create(apiKey);
-            _elmahioApi.Messages.OnMessage += (sender, args) => options.OnMessage?.Invoke(args.Message);
-            _elmahioApi.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
         }
 #endif
 
