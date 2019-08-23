@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Threading;
 using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
 using Microsoft.Extensions.Logging;
@@ -12,39 +9,14 @@ namespace Elmah.Io.Extensions.Logging
 {
     public class ElmahIoLogger : ILogger
     {
-        internal static string _assemblyVersion = typeof(ElmahIoLogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
         private const string OriginalFormatPropertyKey = "{OriginalFormat}";
-        private readonly IElmahioAPI _elmahioApi;
-        private readonly Guid _logId;
-#if NETSTANDARD1_1
-        private readonly LogLevel _level;
-#endif
+        private readonly ElmahIoProviderOptions _options;
+        private readonly ICanHandleMessages _messageHandler;
 
-        public ElmahIoLogger(string apiKey, Guid logId, ElmahIoProviderOptions options)
+        public ElmahIoLogger(ICanHandleMessages messageHandler, ElmahIoProviderOptions options)
         {
-            _logId = logId;
-            var api = new ElmahioAPI(new ApiKeyCredentials(apiKey), HttpClientHandlerFactory.GetHttpClientHandler(new ElmahIoOptions
-            {
-                WebProxy = options.WebProxy
-            }));
-            api.HttpClient.Timeout = new TimeSpan(0, 0, 5);
-            api.HttpClient.DefaultRequestHeaders.UserAgent.Clear();
-            api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)));
-            api.Messages.OnMessage += (sender, args) => options.OnMessage?.Invoke(args.Message);
-            api.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
-            _elmahioApi = api;
-        }
-
-#if NETSTANDARD1_1
-        public ElmahIoLogger(string apiKey, Guid logId, LogLevel level, ElmahIoProviderOptions options) : this(apiKey, logId, options)
-        {
-            _level = level;
-        }
-#endif
-
-        internal ElmahIoLogger(IElmahioAPI api)
-        {
-            _elmahioApi = api;
+            _messageHandler = messageHandler;
+            _options = options;
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -103,7 +75,12 @@ namespace Elmah.Io.Extensions.Logging
                 }
             }
 
-            _elmahioApi.Messages.CreateAndNotify(_logId, createMessage);
+            if (_options.OnFilter != null && _options.OnFilter(createMessage))
+            {
+                return;
+            }
+
+            _messageHandler.AddMessage(createMessage);
         }
 
         private string Type(Exception exception)
@@ -113,20 +90,12 @@ namespace Elmah.Io.Extensions.Logging
 
         private string User()
         {
-#if ISTWOZERO
-            return Thread.CurrentPrincipal?.Identity?.Name;
-#else
-            return null;
-#endif
+            return System.Threading.Thread.CurrentPrincipal?.Identity?.Name;
         }
 
         private string Hostname()
         {
-#if ISTWOZERO
             return Environment.MachineName;
-#else
-            return null;
-#endif
         }
 
         private string Source(Exception exception)
@@ -136,11 +105,7 @@ namespace Elmah.Io.Extensions.Logging
 
         public bool IsEnabled(LogLevel logLevel)
         {
-#if NETSTANDARD1_1
-            return logLevel >= _level;
-#else
             return true;
-#endif
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -168,5 +133,6 @@ namespace Elmah.Io.Extensions.Logging
                     return Severity.Information;
             }
         }
+
     }
 }

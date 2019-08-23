@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>An elmah.io provider for Microsoft.Extensions.Logging</Description>
     <Authors>elmah.io</Authors>
-    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>Elmah.Io.Extensions.Logging</AssemblyName>
     <PackageId>Elmah.Io.Extensions.Logging</PackageId>
     <PackageTags>Error;Exception;Reporting;Management;Logging;ELMAH;Diagnostics;Tracing</PackageTags>
@@ -20,19 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Elmah.Io.Client" Version="[3.5.67,4)" />
+    <PackageReference Include="Elmah.Io.Client" Version="[3.5.68,4)" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>$(DefineConstants);ISTWOZERO</DefineConstants>
-  </PropertyGroup>
 </Project>

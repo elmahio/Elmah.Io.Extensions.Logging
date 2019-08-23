@@ -17,20 +17,16 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void CanLog()
         {
             // Arrange
-            var messagesMock = new Mock<IMessages>();
-            var apiMock = new Mock<IElmahioAPI>();
-            apiMock
-                .Setup(x => x.Messages)
-                .Returns(messagesMock.Object);
+            var queueMock = new Mock<ICanHandleMessages>();
 
             CreateMessage message = null;
-            messagesMock
-                .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))
-                .Callback<Guid, CreateMessage>((logId, msg) =>
+            queueMock
+                .Setup(x => x.AddMessage(It.IsAny<CreateMessage>()))
+                .Callback<CreateMessage>((msg) =>
                 {
                     message = msg;
                 });
-            var logger = new ElmahIoLogger(apiMock.Object);
+            var logger = new ElmahIoLogger(queueMock.Object, new ElmahIoProviderOptions());
 
             // Act
             logger.LogError("This is an error from {User} with {Cookies} and {StatusCode}",

@@ -1,98 +1,51 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-#if NETSTANDARD2_0
 using Microsoft.Extensions.Options;
-#endif
 
 namespace Elmah.Io.Extensions.Logging
 {
-#if NETSTANDARD2_0
     [ProviderAlias("ElmahIo")]
-#endif
     public class ElmahIoLoggerProvider : ILoggerProvider
     {
-        private readonly string _apiKey;
-        private readonly Guid _logId;
         private readonly ElmahIoProviderOptions _options;
-#if NETSTANDARD1_1
-        private readonly FilterLoggerSettings _filter;
-#endif
+        private readonly MessageQueue _messageQueue;
 
-#if NETSTANDARD2_0
-        public ElmahIoLoggerProvider(IOptions<ElmahIoProviderOptions> options)
+        public ElmahIoLoggerProvider(IOptions<ElmahIoProviderOptions> options) : this(options.Value.ApiKey, options.Value.LogId, options.Value)
         {
-            var loggerOptions = options.Value;
-            _apiKey = loggerOptions.ApiKey;
-            _logId = loggerOptions.LogId;
-            _options = loggerOptions;
         }
-#endif
 
         public ElmahIoLoggerProvider(string apiKey, Guid logId, ElmahIoProviderOptions options = null)
         {
-#if NETSTANDARD1_1
-            _filter = new FilterLoggerSettings
+            if (options.BatchPostingLimit <= 0)
             {
-                {"*", LogLevel.Warning}
-            };
-#endif
-            _apiKey = apiKey;
-            _logId = logId;
+                throw new ArgumentOutOfRangeException(nameof(options.BatchPostingLimit), $"{nameof(options.BatchPostingLimit)} must be a positive number.");
+            }
+
+            if (options.Period <= TimeSpan.Zero)
+            {
+                throw new ArgumentOutOfRangeException(nameof(options.Period), $"{nameof(options.Period)} must be longer than zero.");
+            }
+
             _options = options ?? new ElmahIoProviderOptions();
             _options.ApiKey = apiKey;
             _options.LogId = logId;
+            _messageQueue = new MessageQueue(_options);
+            _messageQueue.Start();
         }
 
         public bool IsEnabled { get; private set; }
 
-#if NETSTANDARD1_1
-        public ElmahIoLoggerProvider(string apiKey, Guid logId, FilterLoggerSettings filter = null, ElmahIoProviderOptions options = null)
-        {
-            if (filter == null)
-            {
-                filter = new FilterLoggerSettings
-                {
-                    {"*", LogLevel.Warning}
-                };
-            }
-            _filter = filter;
-
-            _apiKey = apiKey;
-            _logId = logId;
-            _options = options ?? new ElmahIoProviderOptions();
-            _options.ApiKey = apiKey;
-            _options.LogId = logId;
-        }
-#endif
-
-#if NETSTANDARD1_1
-        private LogLevel FindLevel(string categoryName)
-        {
-            var def = LogLevel.Warning;
-            foreach (var s in _filter.Switches)
-            {
-                if (categoryName.Contains(s.Key))
-                    return s.Value;
-
-                if (s.Key == "*")
-                    def = s.Value;
-            }
-
-            return def;
-        }
-#endif
-
         public ILogger CreateLogger(string name)
         {
-#if NETSTANDARD1_1
-            return new ElmahIoLogger(_apiKey, _logId, FindLevel(name), _options);
-#else
-            return new ElmahIoLogger(_options.ApiKey, _options.LogId, _options);
-#endif
+            return new ElmahIoLogger(_messageQueue, _options);
         }
 
         public void Dispose()
         {
+            if (IsEnabled)
+            {
+                _messageQueue.Stop();
+            }
         }
     }
 }
