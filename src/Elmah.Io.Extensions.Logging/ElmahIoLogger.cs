@@ -41,9 +41,16 @@ namespace Elmah.Io.Extensions.Logging
             {
                 // Fill in fields by looking at properties provided by MEL.
                 // Properties than we cannot map to elmah.io fields, are added to the Data tab.
-                foreach (var stateProperty in stateProperties.Where(prop => prop.Key != OriginalFormatPropertyKey))
+                foreach (var stateProperty in stateProperties)
                 {
-                    if (stateProperty.IsStatusCode(out int? statusCode)) createMessage.StatusCode = statusCode.Value;
+                    if (stateProperty.Key == OriginalFormatPropertyKey)
+                    {
+                        if (stateProperty.Value is string value)
+                        {
+                            createMessage.TitleTemplate = value;
+                        }
+                    }
+                    else if (stateProperty.IsStatusCode(out int? statusCode)) createMessage.StatusCode = statusCode.Value;
                     else if (stateProperty.IsApplication(out string application)) createMessage.Application = application;
                     else if (stateProperty.IsSource(out string source)) createMessage.Source = source;
                     else if (stateProperty.IsHostname(out string hostname)) createMessage.Hostname = hostname;
