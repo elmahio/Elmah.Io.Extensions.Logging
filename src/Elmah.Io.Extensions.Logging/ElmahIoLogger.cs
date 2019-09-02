@@ -87,6 +87,8 @@ namespace Elmah.Io.Extensions.Logging
                 return;
             }
 
+            _options.OnMessage?.Invoke(createMessage);
+
             _messageHandler.AddMessage(createMessage);
         }
 

@@ -84,7 +84,6 @@ namespace Elmah.Io.Extensions.Logging
                 api.HttpClient.Timeout = new TimeSpan(0, 0, 5);
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Clear();
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)));
-                api.Messages.OnMessage += (sender, args) => _options.OnMessage?.Invoke(args.Message);
                 api.Messages.OnMessageFail += (sender, args) => _options.OnError?.Invoke(args.Message, args.Error);
                 _elmahIoClient = api;
             }
