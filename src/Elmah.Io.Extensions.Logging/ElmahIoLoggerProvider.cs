@@ -16,17 +16,18 @@ namespace Elmah.Io.Extensions.Logging
 
         public ElmahIoLoggerProvider(string apiKey, Guid logId, ElmahIoProviderOptions options = null)
         {
-            if (options.BatchPostingLimit <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(options.BatchPostingLimit), $"{nameof(options.BatchPostingLimit)} must be a positive number.");
-            }
-
-            if (options.Period <= TimeSpan.Zero)
-            {
-                throw new ArgumentOutOfRangeException(nameof(options.Period), $"{nameof(options.Period)} must be longer than zero.");
-            }
-
             _options = options ?? new ElmahIoProviderOptions();
+
+            if (_options.BatchPostingLimit <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(_options.BatchPostingLimit), $"{nameof(_options.BatchPostingLimit)} must be a positive number.");
+            }
+
+            if (_options.Period <= TimeSpan.Zero)
+            {
+                throw new ArgumentOutOfRangeException(nameof(_options.Period), $"{nameof(_options.Period)} must be longer than zero.");
+            }
+
             _options.ApiKey = apiKey;
             _options.LogId = logId;
             _messageQueue = new MessageQueue(_options);
