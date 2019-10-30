@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>An elmah.io provider for Microsoft.Extensions.Logging</Description>
+    <Description>Microsoft.Extensions.Logging decorator for ASP.NET Core and elmah.io</Description>
     <Authors>elmah.io</Authors>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssemblyName>Elmah.Io.Extensions.Logging</AssemblyName>
-    <PackageId>Elmah.Io.Extensions.Logging</PackageId>
-    <PackageTags>Error;Exception;Reporting;Management;Logging;ELMAH;Diagnostics;Tracing;aspnetcore</PackageTags>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Elmah.Io.AspNetCore.ExtensionsLogging</AssemblyName>
+    <PackageId>Elmah.Io.AspNetCore.ExtensionsLogging</PackageId>
+    <PackageTags>Error;Exception;Reporing;Management;Logging;ELMAH;Diagnostics;Tracing;aspnetcore</PackageTags>
     <PackageIconUrl>https://secure.gravatar.com/avatar/5c4cb3646528821117abde6d2d5ee22d?s=64</PackageIconUrl>
     <PackageProjectUrl>https://elmah.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/elmahio/Elmah.Io.Extensions.Logging</RepositoryUrl>
@@ -20,7 +20,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Elmah.Io.Client" Version="[3.6.73,4)" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0" />
   </ItemGroup>
+
 </Project>

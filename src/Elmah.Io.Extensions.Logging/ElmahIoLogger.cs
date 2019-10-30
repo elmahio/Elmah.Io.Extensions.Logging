@@ -12,11 +12,13 @@ namespace Elmah.Io.Extensions.Logging
         private const string OriginalFormatPropertyKey = "{OriginalFormat}";
         private readonly ElmahIoProviderOptions _options;
         private readonly ICanHandleMessages _messageHandler;
+        private readonly IExternalScopeProvider _externalScopeProvider;
 
-        public ElmahIoLogger(ICanHandleMessages messageHandler, ElmahIoProviderOptions options)
+        public ElmahIoLogger(ICanHandleMessages messageHandler, ElmahIoProviderOptions options, IExternalScopeProvider externalScopeProvider)
         {
             _messageHandler = messageHandler;
             _options = options;
+            _externalScopeProvider = externalScopeProvider;
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -34,44 +36,56 @@ namespace Elmah.Io.Extensions.Logging
                 DateTime = DateTime.UtcNow,
                 Title = message,
                 Severity = LogLevelToSeverity(logLevel).ToString(),
+                Source = Source(exception),
+                Hostname = Hostname(),
+                User = User(),
+                Type = Type(exception),
                 Data = new List<Item>(),
             };
 
+            var properties = Enumerable.Empty<KeyValuePair<string, object>>();
             if (state is IEnumerable<KeyValuePair<string, object>> stateProperties)
             {
-                // Fill in fields by looking at properties provided by MEL.
-                // Properties than we cannot map to elmah.io fields, are added to the Data tab.
-                foreach (var stateProperty in stateProperties)
-                {
-                    if (stateProperty.Key == OriginalFormatPropertyKey)
-                    {
-                        if (stateProperty.Value is string value)
-                        {
-                            createMessage.TitleTemplate = value;
-                        }
-                    }
-                    else if (stateProperty.IsStatusCode(out int? statusCode)) createMessage.StatusCode = statusCode.Value;
-                    else if (stateProperty.IsApplication(out string application)) createMessage.Application = application;
-                    else if (stateProperty.IsSource(out string source)) createMessage.Source = source;
-                    else if (stateProperty.IsHostname(out string hostname)) createMessage.Hostname = hostname;
-                    else if (stateProperty.IsUser(out string user)) createMessage.User = user;
-                    else if (stateProperty.IsMethod(out string method)) createMessage.Method = method;
-                    else if (stateProperty.IsVersion(out string version)) createMessage.Version = version;
-                    else if (stateProperty.IsUrl(out string url)) createMessage.Url = url;
-                    else if (stateProperty.IsType(out string type)) createMessage.Type = type;
-                    else if (stateProperty.IsServerVariables(out List<Item> serverVariables)) createMessage.ServerVariables = serverVariables;
-                    else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
-                    else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;
-                    else if (stateProperty.IsQueryString(out List<Item> queryString)) createMessage.QueryString = queryString;
-                    else createMessage.Data.Add(stateProperty.ToItem());
-                }
+                properties = properties.Concat(stateProperties);
             }
 
-            // Fill in as many blanks as we can by looking at environment variables, etc.
-            if (string.IsNullOrWhiteSpace(createMessage.Source)) createMessage.Source = Source(exception);
-            if (string.IsNullOrWhiteSpace(createMessage.Hostname)) createMessage.Hostname = Hostname();
-            if (string.IsNullOrWhiteSpace(createMessage.User)) createMessage.User = User();
-            if (string.IsNullOrWhiteSpace(createMessage.Type)) createMessage.Type = Type(exception);
+            if (_options.IncludeScopes)
+            {
+                _externalScopeProvider?.ForEachScope<object>((scope, _) =>
+                {
+                    if (scope is IEnumerable<KeyValuePair<string, object>> scopeProperties)
+                    {
+                        properties = properties.Concat(scopeProperties);
+                    }
+                }, null);
+            }
+
+            // Fill in fields by looking at properties provided by MEL.
+            // Properties than we cannot map to elmah.io fields, are added to the Data tab.
+            foreach (var stateProperty in properties)
+            {
+                if (stateProperty.Key == OriginalFormatPropertyKey)
+                {
+                    if (stateProperty.Value is string value)
+                    {
+                        createMessage.TitleTemplate = value;
+                    }
+                }
+                else if (stateProperty.IsStatusCode(out int? statusCode)) createMessage.StatusCode = statusCode.Value;
+                else if (stateProperty.IsApplication(out string application)) createMessage.Application = application;
+                else if (stateProperty.IsSource(out string source)) createMessage.Source = source;
+                else if (stateProperty.IsHostname(out string hostname)) createMessage.Hostname = hostname;
+                else if (stateProperty.IsUser(out string user)) createMessage.User = user;
+                else if (stateProperty.IsMethod(out string method)) createMessage.Method = method;
+                else if (stateProperty.IsVersion(out string version)) createMessage.Version = version;
+                else if (stateProperty.IsUrl(out string url)) createMessage.Url = url;
+                else if (stateProperty.IsType(out string type)) createMessage.Type = type;
+                else if (stateProperty.IsServerVariables(out List<Item> serverVariables)) createMessage.ServerVariables = serverVariables;
+                else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
+                else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;
+                else if (stateProperty.IsQueryString(out List<Item> queryString)) createMessage.QueryString = queryString;
+                else createMessage.Data.Add(stateProperty.ToItem());
+            }
 
             if (exception != null)
             {
@@ -119,7 +133,8 @@ namespace Elmah.Io.Extensions.Logging
 
         public IDisposable BeginScope<TState>(TState state)
         {
-            return null;
+            if (!_options.IncludeScopes || state == null) return null;
+            return _externalScopeProvider?.Push(state);
         }
 
         private Severity LogLevelToSeverity(LogLevel logLevel)

@@ -44,5 +44,9 @@ namespace Elmah.Io.Extensions.Logging
         /// If you don't have outgoing internet connection from the server hosting your application, you can log through a web proxy.
         /// </summary>
         public IWebProxy WebProxy { get; set; }
+        /// <summary>
+        /// Enable additional properties added manually and/or through ASP.NET Core, Elmah.Io.AspNetCore.ExtensionsLogging, and similar.
+        /// </summary>
+        public bool IncludeScopes { get; set; } = true;
     }
 }

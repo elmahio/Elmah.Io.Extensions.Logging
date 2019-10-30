@@ -1,4 +1,4 @@
-version: 3.5.{build}
+version: 3.6.{build}-pre
 branches:
   only:
   - master
@@ -9,6 +9,7 @@ build:
   verbosity: minimal
 after_build:
 - ps: dotnet pack /p:Version=$env:APPVEYOR_BUILD_VERSION src\Elmah.Io.Extensions.Logging\Elmah.Io.Extensions.Logging.csproj --output artifacts
+- ps: dotnet pack /p:Version=$env:APPVEYOR_BUILD_VERSION src\Elmah.Io.AspNetCore.ExtensionsLogging\Elmah.Io.AspNetCore.ExtensionsLogging.csproj --output artifacts
 test:
   assemblies:
     only:

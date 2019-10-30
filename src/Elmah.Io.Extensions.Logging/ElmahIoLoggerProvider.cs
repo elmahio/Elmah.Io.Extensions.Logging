@@ -5,10 +5,11 @@ using Microsoft.Extensions.Options;
 namespace Elmah.Io.Extensions.Logging
 {
     [ProviderAlias("ElmahIo")]
-    public class ElmahIoLoggerProvider : ILoggerProvider
+    public class ElmahIoLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
         private readonly ElmahIoProviderOptions _options;
         private readonly MessageQueue _messageQueue;
+        private IExternalScopeProvider _scopeProvider;
 
         public ElmahIoLoggerProvider(IOptions<ElmahIoProviderOptions> options) : this(options.Value.ApiKey, options.Value.LogId, options.Value)
         {
@@ -38,7 +39,7 @@ namespace Elmah.Io.Extensions.Logging
 
         public ILogger CreateLogger(string name)
         {
-            return new ElmahIoLogger(_messageQueue, _options);
+            return new ElmahIoLogger(_messageQueue, _options, _scopeProvider);
         }
 
         public void Dispose()
@@ -47,6 +48,11 @@ namespace Elmah.Io.Extensions.Logging
             {
                 _messageQueue.Stop();
             }
+        }
+
+        public void SetScopeProvider(IExternalScopeProvider scopeProvider)
+        {
+            _scopeProvider = scopeProvider;
         }
     }
 }

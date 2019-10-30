@@ -111,6 +111,14 @@ namespace Elmah.Io.Extensions.Logging
             {
                 result = properties.Select(p => ToItem(p)).ToList();
             }
+            else if (property.Value is Dictionary<string, string> dictionary)
+            {
+                foreach (var key in dictionary.Keys)
+                {
+                    var value = dictionary[key];
+                    result.Add(new Item(key, value != null ? value.Trim() : value));
+                }
+            }
             else if (property.Value is string && !string.IsNullOrWhiteSpace(property.Value?.ToString()))
             {
                 var keyValues = property.Value.ToString().Split(new string[] { "], [" }, StringSplitOptions.RemoveEmptyEntries);
