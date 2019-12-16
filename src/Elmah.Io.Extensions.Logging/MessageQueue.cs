@@ -40,12 +40,13 @@ namespace Elmah.Io.Extensions.Logging
 
         internal void Stop()
         {
-            _cancellationTokenSource.Cancel();
-            _messages.CompleteAdding();
-
             try
             {
-                _outputTask.Wait(_options.Period);
+                if (_messages.Count > 0)
+                {
+                    // Remaining messages in queue. Flush them if possible.
+                    ProcessMessages().GetAwaiter().GetResult();
+                }
             }
             catch (TaskCanceledException)
             {
@@ -53,6 +54,9 @@ namespace Elmah.Io.Extensions.Logging
             catch (AggregateException ex) when (ex.InnerExceptions.Count == 1 && ex.InnerExceptions[0] is TaskCanceledException)
             {
             }
+
+            _cancellationTokenSource.Cancel();
+            _messages.CompleteAdding();
         }
 
         public void AddMessage(CreateMessage message)
@@ -68,7 +72,7 @@ namespace Elmah.Io.Extensions.Logging
                 }
                 catch
                 {
-                    //cancellation token canceled or CompleteAdding called
+                    // Cancellation token canceled or CompleteAdding called
                 }
             }
         }
@@ -116,32 +120,38 @@ namespace Elmah.Io.Extensions.Logging
         {
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
-                while (_messages.TryTake(out var message))
-                {
-                    _currentBatch.Add(message);
-                }
-
-                var messagesDropped = Interlocked.Exchange(ref _messagesDropped, 0);
-                if (messagesDropped != 0)
-                {
-                    _currentBatch.Add(new CreateMessage { Title = $"{messagesDropped} message(s) dropped because of queue size limit. Increase the queue size or decrease logging verbosity to avoid this." });
-                }
-
-                if (_currentBatch.Count > 0)
-                {
-                    try
-                    {
-                        await WriteMessagesAsync(_currentBatch, _cancellationTokenSource.Token);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    _currentBatch.Clear();
-                }
-
+                // Process messages
+                await ProcessMessages();
+                // Then wait until next check
                 await IntervalAsync(_options.Period, _cancellationTokenSource.Token);
+            }
+        }
+
+        private async Task ProcessMessages()
+        {
+            while (_messages.TryTake(out var message))
+            {
+                _currentBatch.Add(message);
+            }
+
+            var messagesDropped = Interlocked.Exchange(ref _messagesDropped, 0);
+            if (messagesDropped != 0)
+            {
+                _currentBatch.Add(new CreateMessage { Title = $"{messagesDropped} message(s) dropped because of queue size limit. Increase the queue size or decrease logging verbosity to avoid this." });
+            }
+
+            if (_currentBatch.Count > 0)
+            {
+                try
+                {
+                    await WriteMessagesAsync(_currentBatch, _cancellationTokenSource.Token);
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                _currentBatch.Clear();
             }
         }
     }
