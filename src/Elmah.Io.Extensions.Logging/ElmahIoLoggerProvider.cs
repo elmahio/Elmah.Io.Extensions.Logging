@@ -35,8 +35,6 @@ namespace Elmah.Io.Extensions.Logging
             _messageQueue.Start();
         }
 
-        public bool IsEnabled { get; private set; }
-
         public ILogger CreateLogger(string name)
         {
             return new ElmahIoLogger(_messageQueue, _options, _scopeProvider);
@@ -44,10 +42,7 @@ namespace Elmah.Io.Extensions.Logging
 
         public void Dispose()
         {
-            if (IsEnabled)
-            {
-                _messageQueue.Stop();
-            }
+            _messageQueue?.Stop();
         }
 
         public void SetScopeProvider(IExternalScopeProvider scopeProvider)
