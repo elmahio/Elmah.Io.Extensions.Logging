@@ -30,11 +30,10 @@ namespace Elmah.Io.Extensions.Logging
 
             if (!IsEnabled(logLevel)) return;
 
-            var message = formatter(state, exception);
             var createMessage = new CreateMessage
             {
                 DateTime = DateTime.UtcNow,
-                Title = message,
+                Title = Title(formatter, state, exception),
                 Severity = LogLevelToSeverity(logLevel).ToString(),
                 Source = Source(exception),
                 Hostname = Hostname(),
@@ -104,6 +103,14 @@ namespace Elmah.Io.Extensions.Logging
             _options.OnMessage?.Invoke(createMessage);
 
             _messageHandler.AddMessage(createMessage);
+        }
+
+        private string Title<TState>(Func<TState, Exception, string> formatter, TState state, Exception exception)
+        {
+            var message = formatter(state, exception);
+            return !string.IsNullOrWhiteSpace(message)
+                ? message
+                : exception?.GetBaseException().Message;
         }
 
         private string Type(Exception exception)

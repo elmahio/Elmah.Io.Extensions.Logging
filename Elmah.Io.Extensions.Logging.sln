@@ -27,9 +27,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0ECA6599-9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.Test", "test\Elmah.Io.Extensions.Logging.Test\Elmah.Io.Extensions.Logging.Test.csproj", "{9F210C4D-644E-4F5D-A050-24DF0EF08E3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.AspNetCore30", "samples\Elmah.Io.Extensions.Logging.AspNetCore30\Elmah.Io.Extensions.Logging.AspNetCore30.csproj", "{3ABA817B-F173-49ED-A50C-08FB209BB020}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.AspNetCore30", "samples\Elmah.Io.Extensions.Logging.AspNetCore30\Elmah.Io.Extensions.Logging.AspNetCore30.csproj", "{3ABA817B-F173-49ED-A50C-08FB209BB020}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.AspNetCore.ExtensionsLogging", "src\Elmah.Io.AspNetCore.ExtensionsLogging\Elmah.Io.AspNetCore.ExtensionsLogging.csproj", "{D56F2A47-4AA3-446E-8AD5-E7BCEAB6FD32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.AspNetCore.ExtensionsLogging", "src\Elmah.Io.AspNetCore.ExtensionsLogging\Elmah.Io.AspNetCore.ExtensionsLogging.csproj", "{D56F2A47-4AA3-446E-8AD5-E7BCEAB6FD32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.Function", "samples\Elmah.Io.Extensions.Logging.Function\Elmah.Io.Extensions.Logging.Function.csproj", "{AFAC32BE-80F7-45AE-994A-28C6C9E4244E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{D56F2A47-4AA3-446E-8AD5-E7BCEAB6FD32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D56F2A47-4AA3-446E-8AD5-E7BCEAB6FD32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D56F2A47-4AA3-446E-8AD5-E7BCEAB6FD32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFAC32BE-80F7-45AE-994A-28C6C9E4244E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFAC32BE-80F7-45AE-994A-28C6C9E4244E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFAC32BE-80F7-45AE-994A-28C6C9E4244E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFAC32BE-80F7-45AE-994A-28C6C9E4244E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{9F210C4D-644E-4F5D-A050-24DF0EF08E3D} = {0ECA6599-92E4-46B6-9ED4-C2C2028E3404}
 		{3ABA817B-F173-49ED-A50C-08FB209BB020} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{D56F2A47-4AA3-446E-8AD5-E7BCEAB6FD32} = {FD99DC60-3A98-4D99-9E71-8C8C2C81530D}
+		{AFAC32BE-80F7-45AE-994A-28C6C9E4244E} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77575286-A290-4053-8F11-8CACBFFE7B9B}

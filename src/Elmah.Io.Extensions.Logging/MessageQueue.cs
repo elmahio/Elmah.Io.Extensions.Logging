@@ -81,12 +81,11 @@ namespace Elmah.Io.Extensions.Logging
         {
             if (_elmahIoClient == null)
             {
-                var api = new ElmahioAPI(new ApiKeyCredentials(_options.ApiKey), HttpClientHandlerFactory.GetHttpClientHandler(new ElmahIoOptions
+                var api = (ElmahioAPI)ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
                 {
                     WebProxy = _options.WebProxy
-                }));
-                api.HttpClient.Timeout = new TimeSpan(0, 0, 5);
-                api.HttpClient.DefaultRequestHeaders.UserAgent.Clear();
+                });
+                api.HttpClient.Timeout = new TimeSpan(0, 0, 30);
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)));
                 api.Messages.OnMessageFail += (sender, args) => _options.OnError?.Invoke(args.Message, args.Error);
                 _elmahIoClient = api;

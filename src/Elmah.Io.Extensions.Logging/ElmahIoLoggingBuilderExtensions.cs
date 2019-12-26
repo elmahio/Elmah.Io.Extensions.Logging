@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Elmah.Io.Extensions.Logging
@@ -15,7 +16,11 @@ namespace Elmah.Io.Extensions.Logging
 
         public static ILoggingBuilder AddElmahIo(this ILoggingBuilder builder)
         {
-            builder.Services.AddSingleton<ILoggerProvider, ElmahIoLoggerProvider>();
+            builder.Services.AddSingleton<ILoggerProvider, ElmahIoLoggerProvider>(services =>
+            {
+                var options = services.GetService<IOptions<ElmahIoProviderOptions>>();
+                return new ElmahIoLoggerProvider(options);
+            });
             return builder;
         }
     }
