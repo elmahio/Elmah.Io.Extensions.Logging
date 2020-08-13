@@ -1,10 +1,9 @@
 ﻿using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Elmah.Io.Extensions.Logging.Test
@@ -15,21 +14,14 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void CanProcessMessages()
         {
             // Arrange
-            var elmahIoClientMock = new Mock<IElmahioAPI>();
-            var messagesMock = new Mock<IMessages>();
-            elmahIoClientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
-            IList<CreateMessage> messages = null;
-            messagesMock
-                .Setup(x => x.CreateBulkAndNotifyAsync(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
-                .Callback<Guid, IList<CreateMessage>>((logId, msgs) =>
-                {
-                    messages = msgs;
-                });
+            var elmahIoClientMock = Substitute.For<IElmahioAPI>();
+            var messagesMock = Substitute.For<IMessages>();
+            elmahIoClientMock.Messages.Returns(messagesMock);
 
             var messageQueue = new MessageQueue(new ElmahIoProviderOptions
             {
                 Period = TimeSpan.FromMilliseconds(10)
-            }, elmahIoClientMock.Object);
+            }, elmahIoClientMock);
             messageQueue.Start();
 
             // Act
@@ -37,8 +29,11 @@ namespace Elmah.Io.Extensions.Logging.Test
 
             // Assert
             Thread.Sleep(1000);
-            Assert.That(messages, Is.Not.Null);
-            Assert.That(messages.Count, Is.EqualTo(1));
+            messagesMock
+                .Received()
+                .CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Is<IList<CreateMessage>>(messages =>
+                    messages != null
+                    && messages.Count == 1));
         }
     }
 }
