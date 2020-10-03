@@ -48,12 +48,17 @@ namespace Elmah.Io.AspNetCore.ExtensionsLogging
             {
                 return context.Request?.Form?.Keys.ToDictionary(k => k, k => context.Request.Form[k].ToString());
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
-                // Request not a form POST or similar
-            }
+                // All sorts of exceptions can happen while trying to read from Request.Form. Like:
+                // - InvalidOperationException: Request not a form POST or similar
+                // - InvalidDataException: Form body without a content-type or similar
+                // - ConnectionResetException: More than 100 active connections or similar
+                // - System.IO.IOException: Unexpected end of stream
 
-            return new Dictionary<string, string>();
+                // In case of an exception return an empty dictionary since we still want the middleware to run
+                return new Dictionary<string, string>();
+            }
         }
 
         private Dictionary<string, string> Cookies(HttpContext context)
