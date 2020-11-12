@@ -40,7 +40,7 @@ namespace Elmah.Io.Extensions.Logging.AspNetCore21
                             // Additional options can be configured like this:
                             //options.OnMessage = msg =>
                             //{
-                            //    msg.Version = "2.0.0";
+                            //    msg.Version = "2.1.0";
                             //};
 
                             // Remove comment on the following line to log through a proxy (in this case Fiddler).
