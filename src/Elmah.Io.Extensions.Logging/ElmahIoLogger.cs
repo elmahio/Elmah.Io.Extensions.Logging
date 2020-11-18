@@ -63,7 +63,11 @@ namespace Elmah.Io.Extensions.Logging
             // Properties than we cannot map to elmah.io fields, are added to the Data tab.
             foreach (var stateProperty in properties)
             {
-                if (stateProperty.Key == OriginalFormatPropertyKey && stateProperty.Value is string value) createMessage.TitleTemplate = value;
+                if (stateProperty.Key == OriginalFormatPropertyKey && stateProperty.Value is string value)
+                {
+                    createMessage.TitleTemplate = value;
+                    continue;
+                }
                 else if (stateProperty.IsStatusCode(out int? statusCode)) createMessage.StatusCode = statusCode.Value;
                 else if (stateProperty.IsApplication(out string application)) createMessage.Application = application;
                 else if (stateProperty.IsSource(out string source)) createMessage.Source = source;
@@ -77,7 +81,8 @@ namespace Elmah.Io.Extensions.Logging
                 else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
                 else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;
                 else if (stateProperty.IsQueryString(out List<Item> queryString)) createMessage.QueryString = queryString;
-                else createMessage.Data.Add(stateProperty.ToItem());
+
+                createMessage.Data.Add(stateProperty.ToItem());
             }
 
             if (exception != null)
@@ -150,6 +155,5 @@ namespace Elmah.Io.Extensions.Logging
                     return Severity.Information;
             }
         }
-
     }
 }
