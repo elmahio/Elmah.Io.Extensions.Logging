@@ -10,6 +10,7 @@ namespace Elmah.Io.Extensions.Logging.Test
 {
     public class ElmahIoLoggerTest
     {
+        IExternalScopeProvider _scopeProvider;
         private ICanHandleMessages _queueMock;
         private ElmahIoLogger _logger;
 
@@ -17,7 +18,8 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void SetUp()
         {
             _queueMock = Substitute.For<ICanHandleMessages>();
-            _logger = new ElmahIoLogger(_queueMock, new ElmahIoProviderOptions(), null);
+            _scopeProvider = Substitute.For<IExternalScopeProvider>();
+            _logger = new ElmahIoLogger(_queueMock, new ElmahIoProviderOptions(), _scopeProvider);
         }
 
         [Test]
@@ -39,6 +41,74 @@ namespace Elmah.Io.Extensions.Logging.Test
                     && msg.Type.Equals("System.ApplicationException")));
         }
 
+        [Test]
+        public void CanLogWithNoScope()
+        {
+            // Arrange
+            _scopeProvider
+                .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
+                .Do(x => x.Arg<Action<object, object>>().Invoke(null, null));
+
+            // Act
+            _logger.LogInformation("msg");
+
+            // Assert
+            _queueMock
+                .Received()
+                .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && !msg.Data.Any()));
+        }
+
+        [Test]
+        public void CanLogWithEnumerableScope()
+        {
+            // Arrange
+            _scopeProvider
+                .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
+                .Do(x => x.Arg<Action<object, object>>().Invoke(new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>("Key", "Value") }, null));
+
+            // Act
+            _logger.LogInformation("msg");
+
+            // Assert
+            _queueMock
+                .Received()
+                .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && msg.Data.Any(d => d.Key == "Key" && d.Value == "Value")));
+        }
+
+        [Test]
+        public void CanLogWithStringScope()
+        {
+            // Arrange
+            _scopeProvider
+                .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
+                .Do(x => x.Arg<Action<object, object>>().Invoke("Scope", null));
+
+            // Act
+            _logger.LogInformation("msg");
+
+            // Assert
+            _queueMock
+                .Received()
+                .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && !msg.Data.Any()));
+        }
+
+
+        [Test]
+        public void CanLogWithObjectScope()
+        {
+            // Arrange
+            _scopeProvider
+                .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
+                .Do(x => x.Arg<Action<object, object>>().Invoke(new { Hello = "World" }, null));
+
+            // Act
+            _logger.LogInformation("msg");
+
+            // Assert
+            _queueMock
+                .Received()
+                .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && msg.Data.Any(d => d.Key == "Hello" && d.Value == "World")));
+        }
         [Test]
         public void CanLogWellKnownProperties()
         {

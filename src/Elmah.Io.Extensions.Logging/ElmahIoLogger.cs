@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
 using Microsoft.Extensions.Logging;
@@ -52,9 +53,22 @@ namespace Elmah.Io.Extensions.Logging
             {
                 _externalScopeProvider?.ForEachScope<object>((scope, _) =>
                 {
+                    if (scope == null) return;
                     if (scope is IEnumerable<KeyValuePair<string, object>> scopeProperties)
                     {
                         properties = properties.Concat(scopeProperties);
+                    }
+                    // Strings and primitive types are ignored for now
+                    else if (!(scope is string) && !scope.GetType().IsPrimitive)
+                    {
+                        properties = properties.Concat(scope
+                            .GetType()
+                            // Only fetch public instance properties declared directly on the scope object. In time we
+                            // may want to support complex inheritance structures here.
+                            .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                            // Only look at non-indexer properties which we can read from
+                            .Where(p => p.CanRead && !string.IsNullOrWhiteSpace(p.Name) && p.Name != "Item" && p.GetIndexParameters().Length == 0)
+                            .Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(scope)?.ToString())));
                     }
                 }, null);
             }
