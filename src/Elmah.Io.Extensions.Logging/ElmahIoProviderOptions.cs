@@ -22,6 +22,10 @@ namespace Elmah.Io.Extensions.Logging
         /// </summary>
         public Func<CreateMessage, bool> OnFilter { get; set; }
         /// <summary>
+        /// An application name to put on all error messages.
+        /// </summary>
+        public string Application { get; set; }
+        /// <summary>
         /// Specify an action to be called on all (not filtered) messages. Use this to decorate log messages with custom properties.
         /// </summary>
         public Action<CreateMessage> OnMessage { get; set; }

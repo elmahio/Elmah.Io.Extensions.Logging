@@ -40,6 +40,7 @@ namespace Elmah.Io.Extensions.Logging
                 Hostname = Hostname(),
                 User = User(),
                 Type = Type(exception),
+                Application = _options.Application,
                 Data = new List<Item>(),
             };
 

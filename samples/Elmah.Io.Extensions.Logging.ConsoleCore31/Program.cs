@@ -15,6 +15,9 @@ namespace Elmah.Io.Extensions.Logging.ConsoleCore31
                 options.ApiKey = "API_KEY";
                 options.LogId = new Guid("LOG_ID");
 
+                // Set an application name on all log messages if logging from multiple applications to the same log
+                //options.Application = "ConsoleCore31";
+
                 // Control the message queue with the following properties
 
                 //options.BatchPostingLimit = 20;
