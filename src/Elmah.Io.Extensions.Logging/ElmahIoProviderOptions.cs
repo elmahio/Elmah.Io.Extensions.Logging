@@ -4,6 +4,9 @@ using System.Net;
 
 namespace Elmah.Io.Extensions.Logging
 {
+    /// <summary>
+    /// Options object containing all available options for the elmah.io provider for Microsoft.Extensions.Logging.
+    /// </summary>
     public class ElmahIoProviderOptions
     {
         /// <summary>
