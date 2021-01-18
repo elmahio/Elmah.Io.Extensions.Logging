@@ -92,6 +92,7 @@ namespace Elmah.Io.Extensions.Logging
                 else if (stateProperty.IsVersion(out string version)) createMessage.Version = version;
                 else if (stateProperty.IsUrl(out string url)) createMessage.Url = url;
                 else if (stateProperty.IsType(out string type)) createMessage.Type = type;
+                else if (stateProperty.IsCorrelationId(out string correlationId)) createMessage.CorrelationId = correlationId;
                 else if (stateProperty.IsServerVariables(out List<Item> serverVariables)) createMessage.ServerVariables = serverVariables;
                 else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
                 else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;

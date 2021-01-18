@@ -123,13 +123,14 @@ namespace Elmah.Io.Extensions.Logging.Test
             var version = Guid.NewGuid().ToString();
             var url = Guid.NewGuid().ToString();
             var statuscode = 404;
+            var correlationId = Guid.NewGuid().ToString();
             var serverVariables = new Dictionary<string, string> { { "serverVariableKey", "serverVariableValue" } };
             var cookies = new Dictionary<string, string> { { "cookiesKey", "cookiesValue" } };
             var form = new Dictionary<string, string> { { "formKey", "formValue" } };
             var queryString = new Dictionary<string, string> { { "queryStringKey", "queryStringValue" } };
 
             // Act
-            _logger.LogInformation("Info message {method} {version} {url} {user} {type} {statusCode} {source} {hostname} {application} {serverVariables} {cookies} {form} {queryString}",
+            _logger.LogInformation("Info message {method} {version} {url} {user} {type} {statusCode} {source} {hostname} {application} {correlationId} {serverVariables} {cookies} {form} {queryString}",
                 method,
                 version,
                 url,
@@ -139,6 +140,7 @@ namespace Elmah.Io.Extensions.Logging.Test
                 source,
                 hostname,
                 application,
+                correlationId,
                 serverVariables,
                 cookies,
                 form,
@@ -158,6 +160,7 @@ namespace Elmah.Io.Extensions.Logging.Test
                     && msg.Version.Equals(version)
                     && msg.Url.Equals(url)
                     && msg.StatusCode == statuscode
+                    && msg.CorrelationId.Equals(correlationId)
                     && msg.ServerVariables.Any(sv => sv.Key == "serverVariableKey" && sv.Value == "serverVariableValue")
                     && msg.Cookies.Any(sv => sv.Key == "cookiesKey" && sv.Value == "cookiesValue")
                     && msg.Form.Any(sv => sv.Key == "formKey" && sv.Value == "formValue")
