@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Elmah.Io.Client;
-using Elmah.Io.Client.Models;
 
 namespace Elmah.Io.Extensions.Logging
 {

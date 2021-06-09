@@ -1,5 +1,4 @@
 ﻿using Elmah.Io.Client;
-using Elmah.Io.Client.Models;
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -15,8 +14,8 @@ namespace Elmah.Io.Extensions.Logging.Test
         {
             // Arrange
             var elmahIoClientMock = Substitute.For<IElmahioAPI>();
-            var messagesMock = Substitute.For<IMessages>();
-            elmahIoClientMock.Messages.Returns(messagesMock);
+            var messagesClientMock = Substitute.For<IMessagesClient>();
+            elmahIoClientMock.Messages.Returns(messagesClientMock);
 
             var messageQueue = new MessageQueue(new ElmahIoProviderOptions
             {
@@ -29,7 +28,7 @@ namespace Elmah.Io.Extensions.Logging.Test
 
             // Assert
             Thread.Sleep(1000);
-            messagesMock
+            messagesClientMock
                 .Received()
                 .CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Is<IList<CreateMessage>>(messages =>
                     messages != null

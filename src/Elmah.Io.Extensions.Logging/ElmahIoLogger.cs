@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Elmah.Io.Client;
-using Elmah.Io.Client.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Elmah.Io.Extensions.Logging

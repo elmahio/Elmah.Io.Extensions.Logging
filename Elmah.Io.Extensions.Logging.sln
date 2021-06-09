@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.EntityFrameworkCore31", "samples\Elmah.Io.Extensions.Logging.EntityFrameworkCore31\Elmah.Io.Extensions.Logging.EntityFrameworkCore31.csproj", "{5440C2CB-A97C-4068-8080-AB15D9CDED9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.AspNetCore31.SignalR", "samples\Elmah.Io.Extensions.Logging.AspNetCore31.SignalR\Elmah.Io.Extensions.Logging.AspNetCore31.SignalR.csproj", "{B0D87515-956E-4056-9B01-8C0CC080D102}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.AspNetCore31.SignalR", "samples\Elmah.Io.Extensions.Logging.AspNetCore31.SignalR\Elmah.Io.Extensions.Logging.AspNetCore31.SignalR.csproj", "{B0D87515-956E-4056-9B01-8C0CC080D102}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

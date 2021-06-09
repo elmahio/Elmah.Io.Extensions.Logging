@@ -1,4 +1,4 @@
-﻿using Elmah.Io.Client.Models;
+﻿using Elmah.Io.Client;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NUnit.Framework;

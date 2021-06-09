@@ -1,4 +1,4 @@
-﻿using Elmah.Io.Client.Models;
+﻿using Elmah.Io.Client;
 
 namespace Elmah.Io.Extensions.Logging
 {
