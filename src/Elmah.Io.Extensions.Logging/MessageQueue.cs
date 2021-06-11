@@ -80,7 +80,7 @@ namespace Elmah.Io.Extensions.Logging
         {
             if (_elmahIoClient == null)
             {
-                var api = (ElmahioAPI)ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
+                var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
                 {
                     WebProxy = _options.WebProxy
                 });
