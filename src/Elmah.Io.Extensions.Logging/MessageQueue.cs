@@ -12,6 +12,7 @@ namespace Elmah.Io.Extensions.Logging
     internal class MessageQueue : ICanHandleMessages
     {
         internal static string _assemblyVersion = typeof(ElmahIoLogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        internal static string _melAssemblyVersion = typeof(Microsoft.Extensions.Logging.ILogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
         private readonly ElmahIoProviderOptions _options;
         private IElmahioAPI _elmahIoClient;
         private BlockingCollection<CreateMessage> _messages;
@@ -86,6 +87,7 @@ namespace Elmah.Io.Extensions.Logging
                 });
                 api.HttpClient.Timeout = new TimeSpan(0, 0, 30);
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)));
+                api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Microsoft.Extensions.Logging", _melAssemblyVersion)));
                 api.Messages.OnMessageFail += (sender, args) => _options.OnError?.Invoke(args.Message, args.Error);
                 _elmahIoClient = api;
             }
