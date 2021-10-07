@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Elmah.Io.Client;
@@ -83,11 +84,10 @@ namespace Elmah.Io.Extensions.Logging
             {
                 var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
                 {
-                    WebProxy = _options.WebProxy
+                    WebProxy = _options.WebProxy,
+                    Timeout = new TimeSpan(0, 0, 30),
+                    UserAgent = UserAgent(),
                 });
-                api.HttpClient.Timeout = new TimeSpan(0, 0, 30);
-                api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)));
-                api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Microsoft.Extensions.Logging", _melAssemblyVersion)));
                 api.Messages.OnMessageFail += (sender, args) => _options.OnError?.Invoke(args.Message, args.Error);
                 _elmahIoClient = api;
             }
@@ -153,6 +153,15 @@ namespace Elmah.Io.Extensions.Logging
 
                 _currentBatch.Clear();
             }
+        }
+
+        private static string UserAgent()
+        {
+            return new StringBuilder()
+                .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)).ToString())
+                .Append(" ")
+                .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Microsoft.Extensions.Logging", _melAssemblyVersion)).ToString())
+                .ToString();
         }
     }
 }
