@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Elmah.Io.Extensions.Logging
 {
+    /// <summary>
+    /// Implementation of Microsoft.Extensions.Logging's ILogger interface that log messages to elmah.io.
+    /// </summary>
     public class ElmahIoLogger : ILogger
     {
         private const string OriginalFormatPropertyKey = "{OriginalFormat}";
@@ -14,6 +17,9 @@ namespace Elmah.Io.Extensions.Logging
         private readonly ICanHandleMessages _messageHandler;
         private readonly IExternalScopeProvider _externalScopeProvider;
 
+        /// <summary>
+        /// Create a new instance of the logger. You typically don't want to call this constructor but rather call the AddElmahIo method.
+        /// </summary>
         public ElmahIoLogger(ICanHandleMessages messageHandler, ElmahIoProviderOptions options, IExternalScopeProvider externalScopeProvider)
         {
             _messageHandler = messageHandler;
@@ -21,6 +27,9 @@ namespace Elmah.Io.Extensions.Logging
             _externalScopeProvider = externalScopeProvider;
         }
 
+        /// <summary>
+        /// Tell the logger to store a message in elmah.io. The message is added to an internal queue and stored asynchronous.
+        /// </summary>
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             if (formatter == null)
@@ -119,6 +128,19 @@ namespace Elmah.Io.Extensions.Logging
             _messageHandler.AddMessage(createMessage);
         }
 
+        /// <inheritdoc/>
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            if (!_options.IncludeScopes || state == null) return null;
+            return _externalScopeProvider?.Push(state);
+        }
+
         private string Type(Exception exception)
         {
             return exception?.GetBaseException().GetType().FullName;
@@ -137,17 +159,6 @@ namespace Elmah.Io.Extensions.Logging
         private string Source(Exception exception)
         {
             return exception?.GetBaseException().Source;
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return true;
-        }
-
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            if (!_options.IncludeScopes || state == null) return null;
-            return _externalScopeProvider?.Push(state);
         }
 
         private Severity LogLevelToSeverity(LogLevel logLevel)

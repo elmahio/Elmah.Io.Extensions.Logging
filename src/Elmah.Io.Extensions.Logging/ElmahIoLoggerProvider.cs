@@ -4,6 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace Elmah.Io.Extensions.Logging
 {
+    /// <summary>
+    /// An ILoggerProvider for registering the elmah.io logger.
+    /// </summary>
     [ProviderAlias("ElmahIo")]
     public class ElmahIoLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
@@ -11,10 +14,20 @@ namespace Elmah.Io.Extensions.Logging
         private readonly MessageQueue _messageQueue;
         private IExternalScopeProvider _scopeProvider;
 
+        /// <summary>
+        /// Create a new instance using the provided options.
+        /// </summary>
+        /// <param name="options"></param>
         public ElmahIoLoggerProvider(IOptions<ElmahIoProviderOptions> options) : this(options.Value.ApiKey, options.Value.LogId, options.Value)
         {
         }
 
+        /// <summary>
+        /// Create a new instance using the provided API key, log ID, and options.
+        /// </summary>
+        /// <param name="apiKey"></param>
+        /// <param name="logId"></param>
+        /// <param name="options"></param>
         public ElmahIoLoggerProvider(string apiKey, Guid logId, ElmahIoProviderOptions options = null)
         {
             _options = options ?? new ElmahIoProviderOptions();
@@ -35,16 +48,21 @@ namespace Elmah.Io.Extensions.Logging
             _messageQueue.Start();
         }
 
+        /// <inheritdoc/>
         public ILogger CreateLogger(string name)
         {
             return new ElmahIoLogger(_messageQueue, _options, _scopeProvider);
         }
 
+        /// <summary>
+        /// Dispose the internal message queue, trying to process all pending messages.
+        /// </summary>
         public void Dispose()
         {
             _messageQueue?.Stop();
         }
 
+        /// <inheritdoc/>
         public void SetScopeProvider(IExternalScopeProvider scopeProvider)
         {
             _scopeProvider = scopeProvider;
