@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29209.62
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FD99DC60-3A98-4D99-9E71-8C8C2C81530D}"
 EndProject
@@ -35,6 +35,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.EntityFrameworkCore31", "samples\Elmah.Io.Extensions.Logging.EntityFrameworkCore31\Elmah.Io.Extensions.Logging.EntityFrameworkCore31.csproj", "{5440C2CB-A97C-4068-8080-AB15D9CDED9E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.AspNetCore31.SignalR", "samples\Elmah.Io.Extensions.Logging.AspNetCore31.SignalR\Elmah.Io.Extensions.Logging.AspNetCore31.SignalR.csproj", "{B0D87515-956E-4056-9B01-8C0CC080D102}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.AspNetCore60", "samples\Elmah.Io.Extensions.Logging.AspNetCore60\Elmah.Io.Extensions.Logging.AspNetCore60.csproj", "{DB957D96-126D-4A21-982C-35F6295B8C9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +80,10 @@ Global
 		{B0D87515-956E-4056-9B01-8C0CC080D102}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0D87515-956E-4056-9B01-8C0CC080D102}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0D87515-956E-4056-9B01-8C0CC080D102}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB957D96-126D-4A21-982C-35F6295B8C9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB957D96-126D-4A21-982C-35F6295B8C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB957D96-126D-4A21-982C-35F6295B8C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB957D96-126D-4A21-982C-35F6295B8C9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{FFF6AD61-80A3-43A6-BA45-798D06E144E3} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{5440C2CB-A97C-4068-8080-AB15D9CDED9E} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{B0D87515-956E-4056-9B01-8C0CC080D102} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
+		{DB957D96-126D-4A21-982C-35F6295B8C9D} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77575286-A290-4053-8F11-8CACBFFE7B9B}
