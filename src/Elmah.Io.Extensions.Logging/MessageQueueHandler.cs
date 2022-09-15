@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Elmah.Io.Client;
+using static Elmah.Io.Extensions.Logging.UserAgentHelper;
 
 namespace Elmah.Io.Extensions.Logging
 {
-    internal class MessageQueue : ICanHandleMessages
+    internal class MessageQueueHandler : ICanHandleMessages
     {
-        internal static string _assemblyVersion = typeof(ElmahIoLogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-        internal static string _melAssemblyVersion = typeof(Microsoft.Extensions.Logging.ILogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
         private readonly ElmahIoProviderOptions _options;
         private IElmahioAPI _elmahIoClient;
         private BlockingCollection<CreateMessage> _messages;
@@ -22,24 +18,24 @@ namespace Elmah.Io.Extensions.Logging
         private readonly List<CreateMessage> _currentBatch = new List<CreateMessage>();
         private int _messagesDropped;
 
-        internal MessageQueue(ElmahIoProviderOptions options, IElmahioAPI elmahIoClient) : this(options)
+        internal MessageQueueHandler(ElmahIoProviderOptions options, IElmahioAPI elmahIoClient) : this(options)
         {
             _elmahIoClient = elmahIoClient;
         }
 
-        public MessageQueue(ElmahIoProviderOptions options)
+        public MessageQueueHandler(ElmahIoProviderOptions options)
         {
             this._options = options;
         }
 
-        internal void Start()
+        public void Start()
         {
             _messages = new BlockingCollection<CreateMessage>(new ConcurrentQueue<CreateMessage>(), _options.BackgroundQueueSize);
             _cancellationTokenSource = new CancellationTokenSource();
             _outputTask = Task.Run(ProcessLogQueue);
         }
 
-        internal void Stop()
+        public void Stop()
         {
             try
             {
@@ -153,15 +149,6 @@ namespace Elmah.Io.Extensions.Logging
 
                 _currentBatch.Clear();
             }
-        }
-
-        private static string UserAgent()
-        {
-            return new StringBuilder()
-                .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Elmah.Io.Extensions.Logging", _assemblyVersion)).ToString())
-                .Append(" ")
-                .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Microsoft.Extensions.Logging", _melAssemblyVersion)).ToString())
-                .ToString();
         }
     }
 }

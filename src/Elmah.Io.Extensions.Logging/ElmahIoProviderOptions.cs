@@ -34,17 +34,24 @@ namespace Elmah.Io.Extensions.Logging
         /// </summary>
         public Action<CreateMessage, Exception> OnError { get; set; }
         /// <summary>
-        /// Specify the interval between storing messages to elmah.io. As default messages are stored every 2 seconds.
+        /// If set to true all log messages are sent to elmah.io synchronously. This should only be used when installed in a context
+        /// where the runtime may not be running after the timespan in the Period property. As default messages are batched and
+        /// logged asynchronously.
+        /// </summary>
+        public bool Synchronous { get; set; } = false;
+        /// <summary>
+        /// Specify the interval between storing messages to elmah.io. This property is only used if the value of Synchronous is false.
+        /// As default messages are stored every 2 seconds.
         /// </summary>
         public TimeSpan Period { get; set; } = TimeSpan.FromSeconds(2);
         /// <summary>
-        /// Specify the batch size to store messages to elmah.io in. As default messages are stored in batches of 50. If you log large messages,
-        /// you may want to lower this number.
+        /// Specify the batch size to store messages to elmah.io in. This property is only used if the value of Synchronous is false.
+        /// As default messages are stored in batches of 50. If you log large messages, you may want to lower this number.
         /// </summary>
         public int BatchPostingLimit { get; set; } = 50;
         /// <summary>
-        /// Specify the size of the queue storing messages to be logged. As default the queue size is 1,000. If you log a lot of messages in your
-        /// application, you can increase the queue size.
+        /// Specify the size of the queue storing messages to be logged. This property is only used if the value of Synchronous is false.
+        /// As default the queue size is 1,000. If you log a lot of messages in your application, you can increase the queue size.
         /// </summary>
         public int BackgroundQueueSize { get; set; } = 1000;
         /// <summary>

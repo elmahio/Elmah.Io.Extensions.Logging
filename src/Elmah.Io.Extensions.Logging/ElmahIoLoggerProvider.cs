@@ -11,7 +11,7 @@ namespace Elmah.Io.Extensions.Logging
     public class ElmahIoLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
         private readonly ElmahIoProviderOptions _options;
-        private readonly MessageQueue _messageQueue;
+        private readonly ICanHandleMessages _messageQueue;
         private IExternalScopeProvider _scopeProvider;
 
         /// <summary>
@@ -32,19 +32,24 @@ namespace Elmah.Io.Extensions.Logging
         {
             _options = options ?? new ElmahIoProviderOptions();
 
-            if (_options.BatchPostingLimit <= 0)
+            if (!_options.Synchronous && _options.BatchPostingLimit <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(_options.BatchPostingLimit), $"{nameof(_options.BatchPostingLimit)} must be a positive number.");
             }
 
-            if (_options.Period <= TimeSpan.Zero)
+            if (!options.Synchronous && _options.Period <= TimeSpan.Zero)
             {
                 throw new ArgumentOutOfRangeException(nameof(_options.Period), $"{nameof(_options.Period)} must be longer than zero.");
             }
 
             _options.ApiKey = apiKey;
             _options.LogId = logId;
-            _messageQueue = new MessageQueue(_options);
+
+            if (_options.Synchronous)
+                _messageQueue = new SynchronousMessageHandler(_options);
+            else
+                _messageQueue = new MessageQueueHandler(_options);
+
             _messageQueue.Start();
         }
 

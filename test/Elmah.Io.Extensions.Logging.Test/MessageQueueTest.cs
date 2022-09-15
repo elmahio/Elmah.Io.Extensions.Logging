@@ -17,7 +17,7 @@ namespace Elmah.Io.Extensions.Logging.Test
             var messagesClientMock = Substitute.For<IMessagesClient>();
             elmahIoClientMock.Messages.Returns(messagesClientMock);
 
-            var messageQueue = new MessageQueue(new ElmahIoProviderOptions
+            var messageQueue = new MessageQueueHandler(new ElmahIoProviderOptions
             {
                 Period = TimeSpan.FromMilliseconds(10)
             }, elmahIoClientMock);

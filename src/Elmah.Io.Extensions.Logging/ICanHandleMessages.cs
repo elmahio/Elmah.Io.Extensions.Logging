@@ -12,5 +12,15 @@ namespace Elmah.Io.Extensions.Logging
         /// </summary>
         /// <param name="message"></param>
         void AddMessage(CreateMessage message);
+
+        /// <summary>
+        /// Called when initializing the logger.
+        /// </summary>
+        void Start();
+
+        /// <summary>
+        /// Called when disposing the logger.
+        /// </summary>
+        void Stop();
     }
 }
