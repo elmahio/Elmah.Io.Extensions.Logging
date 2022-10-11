@@ -7,17 +7,27 @@ using System.Threading.Tasks;
 
 namespace Elmah.Io.AspNetCore.ExtensionsLogging
 {
+    /// <summary>
+    /// Middleware for enriching messages logged through Microsoft.Extensions.Logging with details from the HTTP context.
+    /// </summary>
     public class ElmahIoExtensionsLoggingMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ElmahIoExtensionsLoggingMiddleware> _logger;
 
+        /// <summary>
+        /// Create a new instance of the middleware. You typically don't want to call this, but rather do this:
+        /// app.UseElmahIoExtensionsLogging();
+        /// </summary>
         public ElmahIoExtensionsLoggingMiddleware(RequestDelegate next, ILogger<ElmahIoExtensionsLoggingMiddleware> logger)
         {
             _next = next;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Invoked on every HTTP request by ASP.NET Core. You never want to call this manually.
+        /// </summary>
         public async Task Invoke(HttpContext context)
         {
             var loggerState = new Dictionary<string, object>
