@@ -36,6 +36,14 @@ jobs:
     - name: Pack Elmah.Io.AspNetCore.ExtensionsLogging
       run: dotnet pack --configuration Release src/Elmah.Io.AspNetCore.ExtensionsLogging/Elmah.Io.AspNetCore.ExtensionsLogging.csproj /p:Version=4.2.${{ github.run_number }}-pre
 
+    - name: Install dotnet-validate
+      run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
+
+    - name: Validate Elmah.Io.Extensions.Logging
+      run: dotnet-validate package local src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.4.2.${{ github.run_number }}-pre.nupkg
+    - name: Validate Elmah.Io.AspNetCore.ExtensionsLogging
+      run: dotnet-validate package local src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.4.2.${{ github.run_number }}-pre.nupkg
+
     - name: Push Elmah.Io.Extensions.Logginge to nuget.org
       run: dotnet nuget push src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.4.2.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
