@@ -36,9 +36,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.AspNetCore60", "samples\Elmah.Io.Extensions.Logging.AspNetCore60\Elmah.Io.Extensions.Logging.AspNetCore60.csproj", "{DB957D96-126D-4A21-982C-35F6295B8C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.ConsoleCore60", "samples\Elmah.Io.Extensions.Logging.ConsoleCore60\Elmah.Io.Extensions.Logging.ConsoleCore60.csproj", "{6080594D-F792-4492-9823-CB57C68CF80C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.ConsoleCore60", "samples\Elmah.Io.Extensions.Logging.ConsoleCore60\Elmah.Io.Extensions.Logging.ConsoleCore60.csproj", "{6080594D-F792-4492-9823-CB57C68CF80C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.EntityFrameworkCore60", "samples\Elmah.Io.Extensions.Logging.EntityFrameworkCore60\Elmah.Io.Extensions.Logging.EntityFrameworkCore60.csproj", "{B11C7ED2-605B-4D9C-A12D-CFF637ADE3B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.EntityFrameworkCore60", "samples\Elmah.Io.Extensions.Logging.EntityFrameworkCore60\Elmah.Io.Extensions.Logging.EntityFrameworkCore60.csproj", "{B11C7ED2-605B-4D9C-A12D-CFF637ADE3B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.AspNetCore70", "samples\Elmah.Io.Extensions.Logging.AspNetCore70\Elmah.Io.Extensions.Logging.AspNetCore70.csproj", "{D33E5E0B-D8EA-4D4C-BF52-E2207D38701F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.Console70", "samples\Elmah.Io.Extensions.Logging.Console70\Elmah.Io.Extensions.Logging.Console70.csproj", "{C00C3B2F-EF72-4584-BB22-E626651B15CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +94,14 @@ Global
 		{B11C7ED2-605B-4D9C-A12D-CFF637ADE3B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B11C7ED2-605B-4D9C-A12D-CFF637ADE3B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B11C7ED2-605B-4D9C-A12D-CFF637ADE3B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33E5E0B-D8EA-4D4C-BF52-E2207D38701F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33E5E0B-D8EA-4D4C-BF52-E2207D38701F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33E5E0B-D8EA-4D4C-BF52-E2207D38701F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33E5E0B-D8EA-4D4C-BF52-E2207D38701F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C00C3B2F-EF72-4584-BB22-E626651B15CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C00C3B2F-EF72-4584-BB22-E626651B15CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C00C3B2F-EF72-4584-BB22-E626651B15CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C00C3B2F-EF72-4584-BB22-E626651B15CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +118,8 @@ Global
 		{DB957D96-126D-4A21-982C-35F6295B8C9D} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{6080594D-F792-4492-9823-CB57C68CF80C} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 		{B11C7ED2-605B-4D9C-A12D-CFF637ADE3B1} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
+		{D33E5E0B-D8EA-4D4C-BF52-E2207D38701F} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
+		{C00C3B2F-EF72-4584-BB22-E626651B15CE} = {5765D44C-2868-4875-B8FE-1D6FBE7C9730}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77575286-A290-4053-8F11-8CACBFFE7B9B}

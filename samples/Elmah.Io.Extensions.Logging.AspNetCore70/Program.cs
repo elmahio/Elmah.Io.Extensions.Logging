@@ -17,12 +17,12 @@ builder.Logging.AddElmahIo(options =>
     options.LogId = new Guid("LOG_ID");
 
     // Optional application name
-    options.Application = "ASP.NET Core 6.0 Application";
+    options.Application = "ASP.NET Core 7.0 Application";
 
     // Additional options can be configured like this:
     options.OnMessage = msg =>
     {
-        msg.Version = "6.0.0";
+        msg.Version = "7.0.0";
     };
 
     // Remove comment on the following line to log through a proxy (in this case Fiddler).
