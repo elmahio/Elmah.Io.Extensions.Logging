@@ -14,14 +14,16 @@ namespace Elmah.Io.Extensions.Logging
     {
         private const string OriginalFormatPropertyKey = "{OriginalFormat}";
         private readonly ElmahIoProviderOptions _options;
+        private readonly string _name;
         private readonly ICanHandleMessages _messageHandler;
         private readonly IExternalScopeProvider _externalScopeProvider;
 
         /// <summary>
         /// Create a new instance of the logger. You typically don't want to call this constructor but rather call the AddElmahIo method.
         /// </summary>
-        public ElmahIoLogger(ICanHandleMessages messageHandler, ElmahIoProviderOptions options, IExternalScopeProvider externalScopeProvider)
+        public ElmahIoLogger(string name, ICanHandleMessages messageHandler, ElmahIoProviderOptions options, IExternalScopeProvider externalScopeProvider)
         {
+            _name = name;
             _messageHandler = messageHandler;
             _options = options;
             _externalScopeProvider = externalScopeProvider;
@@ -101,6 +103,7 @@ namespace Elmah.Io.Extensions.Logging
                 else if (stateProperty.IsUrl(out string url)) createMessage.Url = url;
                 else if (stateProperty.IsType(out string type)) createMessage.Type = type;
                 else if (stateProperty.IsCorrelationId(out string correlationId)) createMessage.CorrelationId = correlationId;
+                else if (stateProperty.IsCategory(out string category)) createMessage.Category = category;
                 else if (stateProperty.IsServerVariables(out List<Item> serverVariables)) createMessage.ServerVariables = serverVariables;
                 else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
                 else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;
@@ -108,6 +111,9 @@ namespace Elmah.Io.Extensions.Logging
 
                 createMessage.Data.Add(stateProperty.ToItem());
             }
+
+            // If a property named 'category' was not found in the log message, set the category to the name of the logger.
+            if (string.IsNullOrWhiteSpace(createMessage.Category)) createMessage.Category = _name;
 
             if (exception != null)
             {

@@ -76,6 +76,11 @@ namespace Elmah.Io.Extensions.Logging
             return keyValue.Is("correlationid", out correlationId);
         }
 
+        internal static bool IsCategory(this KeyValuePair<string, object> keyValue, out string category)
+        {
+            return keyValue.Is("category", out category);
+        }
+
         internal static bool IsServerVariables(this KeyValuePair<string, object> keyValue, out List<Item> serverVariables)
         {
             serverVariables = null;

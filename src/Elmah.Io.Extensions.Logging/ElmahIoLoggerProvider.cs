@@ -56,7 +56,7 @@ namespace Elmah.Io.Extensions.Logging
         /// <inheritdoc/>
         public ILogger CreateLogger(string name)
         {
-            return new ElmahIoLogger(_messageQueue, _options, _scopeProvider);
+            return new ElmahIoLogger(name, _messageQueue, _options, _scopeProvider);
         }
 
         /// <summary>

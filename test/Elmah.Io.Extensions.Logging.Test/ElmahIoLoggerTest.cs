@@ -19,7 +19,7 @@ namespace Elmah.Io.Extensions.Logging.Test
         {
             _queueMock = Substitute.For<ICanHandleMessages>();
             _scopeProvider = Substitute.For<IExternalScopeProvider>();
-            _logger = new ElmahIoLogger(_queueMock, new ElmahIoProviderOptions(), _scopeProvider);
+            _logger = new ElmahIoLogger("TestLogger", _queueMock, new ElmahIoProviderOptions(), _scopeProvider);
         }
 
         [Test]
@@ -38,7 +38,8 @@ namespace Elmah.Io.Extensions.Logging.Test
                     && msg.Title.Equals("This is an error with a PropertyValue")
                     && msg.TitleTemplate.Equals("This is an error with a {property}")
                     && msg.Severity.Equals("Error")
-                    && msg.Type.Equals("System.ApplicationException")));
+                    && msg.Type.Equals("System.ApplicationException")
+                    && msg.Category.Equals("TestLogger")));
         }
 
         [Test]
@@ -124,13 +125,14 @@ namespace Elmah.Io.Extensions.Logging.Test
             var url = Guid.NewGuid().ToString();
             var statuscode = 404;
             var correlationId = Guid.NewGuid().ToString();
+            var category = Guid.NewGuid().ToString();
             var serverVariables = new Dictionary<string, string> { { "serverVariableKey", "serverVariableValue" } };
             var cookies = new Dictionary<string, string> { { "cookiesKey", "cookiesValue" } };
             var form = new Dictionary<string, string> { { "formKey", "formValue" } };
             var queryString = new Dictionary<string, string> { { "queryStringKey", "queryStringValue" } };
 
             // Act
-            _logger.LogInformation("Info message {method} {version} {url} {user} {type} {statusCode} {source} {hostname} {application} {correlationId} {serverVariables} {cookies} {form} {queryString}",
+            _logger.LogInformation("Info message {method} {version} {url} {user} {type} {statusCode} {source} {hostname} {application} {correlationId} {category} {serverVariables} {cookies} {form} {queryString}",
                 method,
                 version,
                 url,
@@ -141,6 +143,7 @@ namespace Elmah.Io.Extensions.Logging.Test
                 hostname,
                 application,
                 correlationId,
+                category,
                 serverVariables,
                 cookies,
                 form,
@@ -161,6 +164,7 @@ namespace Elmah.Io.Extensions.Logging.Test
                     && msg.Url.Equals(url)
                     && msg.StatusCode == statuscode
                     && msg.CorrelationId.Equals(correlationId)
+                    && msg.Category.Equals(category)
                     && msg.ServerVariables.Any(sv => sv.Key == "serverVariableKey" && sv.Value == "serverVariableValue")
                     && msg.Cookies.Any(sv => sv.Key == "cookiesKey" && sv.Value == "cookiesValue")
                     && msg.Form.Any(sv => sv.Key == "formKey" && sv.Value == "formValue")
