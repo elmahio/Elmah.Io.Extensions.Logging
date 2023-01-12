@@ -32,7 +32,7 @@ namespace Elmah.Io.Extensions.Logging.Test
                 .Received()
                 .CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Is<IList<CreateMessage>>(messages =>
                     messages != null
-                    && messages.Count == 1));
+                    && messages.Count == 1), Arg.Any<CancellationToken>());
         }
     }
 }
