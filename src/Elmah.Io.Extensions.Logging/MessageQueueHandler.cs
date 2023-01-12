@@ -95,14 +95,14 @@ namespace Elmah.Io.Extensions.Logging
 
                 if (bulk.Count >= _options.BatchPostingLimit)
                 {
-                    await _elmahIoClient.Messages.CreateBulkAndNotifyAsync(_options.LogId, bulk);
+                    await _elmahIoClient.Messages.CreateBulkAndNotifyAsync(_options.LogId, bulk, token);
                     bulk.Clear();
                 }
             }
 
             if (bulk.Count > 0)
             {
-                await _elmahIoClient.Messages.CreateBulkAndNotifyAsync(_options.LogId, bulk);
+                await _elmahIoClient.Messages.CreateBulkAndNotifyAsync(_options.LogId, bulk, token);
             }
 
         }
