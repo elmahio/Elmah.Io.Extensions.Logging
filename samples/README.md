@@ -14,3 +14,4 @@ This directory contains samples to show how to integrate elmah.io into Microsoft
 * **Elmah.Io.Extensions.Logging.EntityFrameworkCore31** - Integrate elmah.io with Microsoft.Extensions.Logging in a .NET Core 3.1 console application with EntityFramework Core.
 * **Elmah.Io.Extensions.Logging.EntityFrameworkCore60** - Integrate elmah.io with Microsoft.Extensions.Logging in a .NET 6.0 console application with EntityFramework Core.
 * **Elmah.Io.Extensions.Logging.Function** - Integrate elmah.io with Azure Functions in .NET 6.0.
+* **Elmah.Io.Extensions.Logging.Function** - Integrate elmah.io with Isolated Azure Functions in .NET 7.0.

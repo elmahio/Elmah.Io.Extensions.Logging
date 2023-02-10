@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Elmah.Io.Extensions.Logging.Function.Isolated": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7025",
+      "launchBrowser": false
+    }
+  }
+}
