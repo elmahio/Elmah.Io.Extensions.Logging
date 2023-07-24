@@ -14,7 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{07AEF95F-8EDB-41B5-A581-ABFEFB8B305A}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build.yml = .github\workflows\build.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -44,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.Console70", "samples\Elmah.Io.Extensions.Logging.Console70\Elmah.Io.Extensions.Logging.Console70.csproj", "{C00C3B2F-EF72-4584-BB22-E626651B15CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.Io.Extensions.Logging.Function.Isolated", "samples\Elmah.Io.Extensions.Logging.Function.Isolated\Elmah.Io.Extensions.Logging.Function.Isolated.csproj", "{8C311B1D-A86B-4851-90A3-E0E886580066}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.Function.Isolated", "samples\Elmah.Io.Extensions.Logging.Function.Isolated\Elmah.Io.Extensions.Logging.Function.Isolated.csproj", "{8C311B1D-A86B-4851-90A3-E0E886580066}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
