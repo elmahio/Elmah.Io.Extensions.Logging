@@ -37,7 +37,7 @@ namespace Elmah.Io.Extensions.Logging
                 throw new ArgumentOutOfRangeException(nameof(_options.BatchPostingLimit), $"{nameof(_options.BatchPostingLimit)} must be a positive number.");
             }
 
-            if (!options.Synchronous && _options.Period <= TimeSpan.Zero)
+            if (!_options.Synchronous && _options.Period <= TimeSpan.Zero)
             {
                 throw new ArgumentOutOfRangeException(nameof(_options.Period), $"{nameof(_options.Period)} must be longer than zero.");
             }
