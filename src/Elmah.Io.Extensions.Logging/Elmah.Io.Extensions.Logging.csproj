@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>An elmah.io provider for Microsoft.Extensions.Logging</Description>
     <Authors>elmah.io</Authors>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <AssemblyName>Elmah.Io.Extensions.Logging</AssemblyName>
     <PackageId>Elmah.Io.Extensions.Logging</PackageId>
     <PackageTags>Error;Exception;Reporting;Management;Logging;ELMAH;Diagnostics;Tracing;aspnetcore</PackageTags>
@@ -35,7 +35,14 @@
 
   <ItemGroup>
     <PackageReference Include="Elmah.Io.Client" Version="[5.1.71-pre,6)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.29" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
