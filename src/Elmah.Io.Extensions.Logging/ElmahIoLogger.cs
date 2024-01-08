@@ -108,8 +108,7 @@ namespace Elmah.Io.Extensions.Logging
                 else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
                 else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;
                 else if (stateProperty.IsQueryString(out List<Item> queryString)) createMessage.QueryString = queryString;
-
-                createMessage.Data.Add(stateProperty.ToItem());
+                else createMessage.Data.Add(stateProperty.ToItem());
             }
 
             // If a property named 'category' was not found in the log message, set the category to the name of the logger.
