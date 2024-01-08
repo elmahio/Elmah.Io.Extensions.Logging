@@ -11,8 +11,8 @@ namespace Elmah.Io.Extensions.Logging.Test
         {
             using var provider = new ElmahIoLoggerProvider(Options.Create(new ElmahIoProviderOptions()));
             var logger = provider.CreateLogger("test");
-            Assert.NotNull(provider);
-            Assert.NotNull(logger);
+            Assert.That(provider, Is.Not.Null);
+            Assert.That(logger, Is.Not.Null);
         }
 
         [Test]
@@ -20,8 +20,8 @@ namespace Elmah.Io.Extensions.Logging.Test
         {
             using var provider = new ElmahIoLoggerProvider("apiKey", Guid.NewGuid());
             var logger = provider.CreateLogger("test");
-            Assert.NotNull(provider);
-            Assert.NotNull(logger);
+            Assert.That(provider, Is.Not.Null);
+            Assert.That(logger, Is.Not.Null);
         }
     }
 }
