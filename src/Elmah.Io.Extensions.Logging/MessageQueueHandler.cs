@@ -13,7 +13,6 @@ namespace Elmah.Io.Extensions.Logging
         private readonly ElmahIoProviderOptions _options;
         private IElmahioAPI _elmahIoClient;
         private BlockingCollection<CreateMessage> _messages;
-        private Task _outputTask;
         private CancellationTokenSource _cancellationTokenSource;
         private readonly List<CreateMessage> _currentBatch = new List<CreateMessage>();
         private int _messagesDropped;
@@ -32,7 +31,7 @@ namespace Elmah.Io.Extensions.Logging
         {
             _messages = new BlockingCollection<CreateMessage>(new ConcurrentQueue<CreateMessage>(), _options.BackgroundQueueSize);
             _cancellationTokenSource = new CancellationTokenSource();
-            _outputTask = Task.Run(ProcessLogQueue);
+            Task.Run(ProcessLogQueue);
         }
 
         public void Stop()
@@ -45,11 +44,9 @@ namespace Elmah.Io.Extensions.Logging
                     ProcessMessages().GetAwaiter().GetResult();
                 }
             }
-            catch (TaskCanceledException)
+            catch (Exception e) when (e is TaskCanceledException || (e is AggregateException ae && ae.InnerExceptions.Count == 1 && ae.InnerExceptions[0] is TaskCanceledException))
             {
-            }
-            catch (AggregateException ex) when (ex.InnerExceptions.Count == 1 && ex.InnerExceptions[0] is TaskCanceledException)
-            {
+                // If a TaskCanceledException is thrown while stopping there is not much to do
             }
 
             _cancellationTokenSource.Cancel();

@@ -1,14 +1,11 @@
 ﻿using Elmah.Io.Client;
 using System;
-using System.Reflection;
 using static Elmah.Io.Extensions.Logging.UserAgentHelper;
 
 namespace Elmah.Io.Extensions.Logging
 {
     internal class SynchronousMessageHandler : ICanHandleMessages
     {
-        internal static string _assemblyVersion = typeof(ElmahIoLogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-        internal static string _melAssemblyVersion = typeof(Microsoft.Extensions.Logging.ILogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
         private readonly ElmahIoProviderOptions _options;
         private IElmahioAPI _elmahIoClient;
 

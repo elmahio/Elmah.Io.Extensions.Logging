@@ -16,7 +16,7 @@ using (var db = new MyDatabase())
     }
     catch
     {
-
+        // USERS2 exception will be automatically logged
     }
 }
 

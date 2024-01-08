@@ -54,15 +54,24 @@ namespace Elmah.Io.Extensions.Logging
         }
 
         /// <inheritdoc/>
-        public ILogger CreateLogger(string name)
+        public ILogger CreateLogger(string categoryName)
         {
-            return new ElmahIoLogger(name, _messageQueue, _options, _scopeProvider);
+            return new ElmahIoLogger(categoryName, _messageQueue, _options, _scopeProvider);
         }
 
         /// <summary>
         /// Dispose the internal message queue, trying to process all pending messages.
         /// </summary>
         public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// This method can be overriden by a subclass to do custom cleanup. Make sure to call: base.Dispose(disposing)
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
         {
             _messageQueue?.Stop();
         }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +11,7 @@ namespace Elmah.Io.Extensions.Logging.Function
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}"); // <-- Don't go into elmah.io because of the filter set in Startup.cs
             log.LogWarning("This is a warning");
-            throw new Exception("This is an error");
+            throw new ApplicationException("This is an error");
         }
     }
 }

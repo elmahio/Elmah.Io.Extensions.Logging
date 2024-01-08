@@ -6,8 +6,8 @@ namespace Elmah.Io.Extensions.Logging
 {
     internal static class UserAgentHelper
     {
-        internal static string _assemblyVersion = typeof(ElmahIoLogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-        internal static string _melAssemblyVersion = typeof(Microsoft.Extensions.Logging.ILogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        private static string _assemblyVersion = typeof(ElmahIoLogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        private static string _melAssemblyVersion = typeof(Microsoft.Extensions.Logging.ILogger).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
         internal static string UserAgent()
         {
