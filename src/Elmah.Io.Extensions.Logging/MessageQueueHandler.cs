@@ -8,23 +8,18 @@ using static Elmah.Io.Extensions.Logging.UserAgentHelper;
 
 namespace Elmah.Io.Extensions.Logging
 {
-    internal class MessageQueueHandler : ICanHandleMessages
+    internal class MessageQueueHandler(ElmahIoProviderOptions options) : ICanHandleMessages
     {
-        private readonly ElmahIoProviderOptions _options;
+        private readonly ElmahIoProviderOptions _options = options;
         private IElmahioAPI _elmahIoClient;
         private BlockingCollection<CreateMessage> _messages;
         private CancellationTokenSource _cancellationTokenSource;
-        private readonly List<CreateMessage> _currentBatch = new List<CreateMessage>();
+        private readonly List<CreateMessage> _currentBatch = [];
         private int _messagesDropped;
 
         internal MessageQueueHandler(ElmahIoProviderOptions options, IElmahioAPI elmahIoClient) : this(options)
         {
             _elmahIoClient = elmahIoClient;
-        }
-
-        public MessageQueueHandler(ElmahIoProviderOptions options)
-        {
-            this._options = options;
         }
 
         public void Start()
@@ -104,7 +99,7 @@ namespace Elmah.Io.Extensions.Logging
 
         }
 
-        private Task IntervalAsync(TimeSpan interval, CancellationToken cancellationToken)
+        private static Task IntervalAsync(TimeSpan interval, CancellationToken cancellationToken)
         {
             return Task.Delay(interval, cancellationToken);
         }

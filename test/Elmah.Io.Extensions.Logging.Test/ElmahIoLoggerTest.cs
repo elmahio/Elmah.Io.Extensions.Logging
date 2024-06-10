@@ -65,7 +65,7 @@ namespace Elmah.Io.Extensions.Logging.Test
             // Arrange
             _scopeProvider
                 .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
-                .Do(x => x.Arg<Action<object, object>>().Invoke(new List<KeyValuePair<string, object>> { new KeyValuePair<string, object>("Key", "Value") }, null));
+                .Do(x => x.Arg<Action<object, object>>().Invoke(new List<KeyValuePair<string, object>> { new("Key", "Value") }, null));
 
             // Act
             _logger.LogInformation("msg");
@@ -114,7 +114,6 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void CanLogWellKnownProperties()
         {
             // Arrange
-            var now = DateTime.UtcNow;
             var hostname = Guid.NewGuid().ToString();
             var type = Guid.NewGuid().ToString();
             var application = Guid.NewGuid().ToString();

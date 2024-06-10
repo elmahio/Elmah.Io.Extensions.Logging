@@ -28,6 +28,8 @@ namespace Elmah.Io.Extensions.Logging
         /// <param name="apiKey"></param>
         /// <param name="logId"></param>
         /// <param name="options"></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3928:Parameter names used into ArgumentException constructors should match an existing one ", Justification = "Properties are on options")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly", Justification = "Properties are on options")]
         public ElmahIoLoggerProvider(string apiKey, Guid logId, ElmahIoProviderOptions options = null)
         {
             _options = options ?? new ElmahIoProviderOptions();

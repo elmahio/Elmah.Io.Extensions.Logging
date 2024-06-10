@@ -10,24 +10,16 @@ namespace Elmah.Io.Extensions.Logging
     /// <summary>
     /// Implementation of Microsoft.Extensions.Logging's ILogger interface that log messages to elmah.io.
     /// </summary>
-    public class ElmahIoLogger : ILogger
+    /// <remarks>
+    /// Create a new instance of the logger. You typically don't want to call this constructor but rather call the AddElmahIo method.
+    /// </remarks>
+    public class ElmahIoLogger(string name, ICanHandleMessages messageHandler, ElmahIoProviderOptions options, IExternalScopeProvider externalScopeProvider) : ILogger
     {
         private const string OriginalFormatPropertyKey = "{OriginalFormat}";
-        private readonly ElmahIoProviderOptions _options;
-        private readonly string _name;
-        private readonly ICanHandleMessages _messageHandler;
-        private readonly IExternalScopeProvider _externalScopeProvider;
-
-        /// <summary>
-        /// Create a new instance of the logger. You typically don't want to call this constructor but rather call the AddElmahIo method.
-        /// </summary>
-        public ElmahIoLogger(string name, ICanHandleMessages messageHandler, ElmahIoProviderOptions options, IExternalScopeProvider externalScopeProvider)
-        {
-            _name = name;
-            _messageHandler = messageHandler;
-            _options = options;
-            _externalScopeProvider = externalScopeProvider;
-        }
+        private readonly ElmahIoProviderOptions _options = options;
+        private readonly string _name = name;
+        private readonly ICanHandleMessages _messageHandler = messageHandler;
+        private readonly IExternalScopeProvider _externalScopeProvider = externalScopeProvider;
 
         /// <summary>
         /// Tell the logger to store a message in elmah.io. The message is added to an internal queue and stored asynchronous.
@@ -51,7 +43,7 @@ namespace Elmah.Io.Extensions.Logging
                 User = User(),
                 Type = Type(exception),
                 Application = _options.Application,
-                Data = new List<Item>(),
+                Data = [],
             };
 
             var properties = Enumerable.Empty<KeyValuePair<string, object>>();
@@ -70,7 +62,7 @@ namespace Elmah.Io.Extensions.Logging
                         properties = properties.Concat(scopeProperties);
                     }
                     // Strings and primitive types are ignored for now
-                    else if (!(scope is string) && !scope.GetType().IsPrimitive)
+                    else if (scope is not string && !scope.GetType().IsPrimitive)
                     {
                         properties = properties.Concat(scope
                             .GetType()
@@ -138,49 +130,42 @@ namespace Elmah.Io.Extensions.Logging
         /// <inheritdoc/>
         public IDisposable BeginScope<TState>(TState state)
         {
-            if (!_options.IncludeScopes || state == null) return null;
+            if (!_options.IncludeScopes || state.Equals(default(TState))) return null;
             return _externalScopeProvider?.Push(state);
         }
 
-        private string Type(Exception exception)
+        private static string Type(Exception exception)
         {
             return exception?.GetBaseException().GetType().FullName;
         }
 
-        private string User()
+        private static string User()
         {
             return System.Threading.Thread.CurrentPrincipal?.Identity?.Name;
         }
 
-        private string Hostname()
+        private static string Hostname()
         {
             return Environment.MachineName;
         }
 
-        private string Source(Exception exception)
+        private static string Source(Exception exception)
         {
             return exception?.GetBaseException().Source;
         }
 
-        private Severity LogLevelToSeverity(LogLevel logLevel)
+        private static Severity LogLevelToSeverity(LogLevel logLevel)
         {
-            switch (logLevel)
+            return logLevel switch
             {
-                case LogLevel.Critical:
-                    return Severity.Fatal;
-                case LogLevel.Debug:
-                    return Severity.Debug;
-                case LogLevel.Error:
-                    return Severity.Error;
-                case LogLevel.Information:
-                    return Severity.Information;
-                case LogLevel.Trace:
-                    return Severity.Verbose;
-                case LogLevel.Warning:
-                    return Severity.Warning;
-                default:
-                    return Severity.Information;
-            }
+                LogLevel.Critical => Severity.Fatal,
+                LogLevel.Debug => Severity.Debug,
+                LogLevel.Error => Severity.Error,
+                LogLevel.Information => Severity.Information,
+                LogLevel.Trace => Severity.Verbose,
+                LogLevel.Warning => Severity.Warning,
+                _ => Severity.Information,
+            };
         }
     }
 }

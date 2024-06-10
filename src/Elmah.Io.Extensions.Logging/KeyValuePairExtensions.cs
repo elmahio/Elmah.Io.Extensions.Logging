@@ -115,7 +115,7 @@ namespace Elmah.Io.Extensions.Logging
 
         internal static List<Item> ToItemList(this KeyValuePair<string, object> property)
         {
-            List<Item> result = new List<Item>();
+            List<Item> result = [];
 
             if (property.Value is IEnumerable<KeyValuePair<string, object>> properties)
             {
@@ -131,7 +131,7 @@ namespace Elmah.Io.Extensions.Logging
             }
             else if (property.Value is string && !string.IsNullOrWhiteSpace(property.Value?.ToString()))
             {
-                var keyValues = property.Value.ToString().Split(new string[] { "], [" }, StringSplitOptions.RemoveEmptyEntries);
+                var keyValues = property.Value.ToString().Split(["], ["], StringSplitOptions.RemoveEmptyEntries);
                 foreach (var rde in keyValues)
                 {
                     var keyAndValue = rde.TrimStart('[').TrimEnd(']').Split(',');

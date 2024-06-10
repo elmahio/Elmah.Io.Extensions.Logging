@@ -4,15 +4,10 @@ using static Elmah.Io.Extensions.Logging.UserAgentHelper;
 
 namespace Elmah.Io.Extensions.Logging
 {
-    internal class SynchronousMessageHandler : ICanHandleMessages
+    internal class SynchronousMessageHandler(ElmahIoProviderOptions options) : ICanHandleMessages
     {
-        private readonly ElmahIoProviderOptions _options;
+        private readonly ElmahIoProviderOptions _options = options;
         private IElmahioAPI _elmahIoClient;
-
-        public SynchronousMessageHandler(ElmahIoProviderOptions options)
-        {
-            this._options = options;
-        }
 
         public void AddMessage(CreateMessage message)
         {

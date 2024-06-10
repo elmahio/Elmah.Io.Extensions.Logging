@@ -10,20 +10,14 @@ namespace Elmah.Io.AspNetCore.ExtensionsLogging
     /// <summary>
     /// Middleware for enriching messages logged through Microsoft.Extensions.Logging with details from the HTTP context.
     /// </summary>
-    public class ElmahIoExtensionsLoggingMiddleware
+    /// <remarks>
+    /// Create a new instance of the middleware. You typically don't want to call this, but rather do this:
+    /// app.UseElmahIoExtensionsLogging();
+    /// </remarks>
+    public class ElmahIoExtensionsLoggingMiddleware(RequestDelegate next, ILogger<ElmahIoExtensionsLoggingMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ElmahIoExtensionsLoggingMiddleware> _logger;
-
-        /// <summary>
-        /// Create a new instance of the middleware. You typically don't want to call this, but rather do this:
-        /// app.UseElmahIoExtensionsLogging();
-        /// </summary>
-        public ElmahIoExtensionsLoggingMiddleware(RequestDelegate next, ILogger<ElmahIoExtensionsLoggingMiddleware> logger)
-        {
-            _next = next;
-            _logger = logger;
-        }
+        private readonly RequestDelegate _next = next;
+        private readonly ILogger<ElmahIoExtensionsLoggingMiddleware> _logger = logger;
 
         /// <summary>
         /// Invoked on every HTTP request by ASP.NET Core. You never want to call this manually.
@@ -47,12 +41,12 @@ namespace Elmah.Io.AspNetCore.ExtensionsLogging
             }
         }
 
-        private Dictionary<string, string> QueryString(HttpContext context)
+        private static Dictionary<string, string> QueryString(HttpContext context)
         {
             return context.Request?.Query?.Keys.ToDictionary(k => k, k => context.Request.Query[k].ToString());
         }
 
-        private Dictionary<string, string> Form(HttpContext context)
+        private static Dictionary<string, string> Form(HttpContext context)
         {
             try
             {
@@ -67,19 +61,18 @@ namespace Elmah.Io.AspNetCore.ExtensionsLogging
                 // - System.IO.IOException: Unexpected end of stream
 
                 // In case of an exception return an empty dictionary since we still want the middleware to run
-                return new Dictionary<string, string>();
+                return [];
             }
         }
 
-        private Dictionary<string, string> Cookies(HttpContext context)
+        private static Dictionary<string, string> Cookies(HttpContext context)
         {
             return context.Request?.Cookies?.Keys.ToDictionary(k => k, k => context.Request.Cookies[k].ToString());
         }
 
-        private Dictionary<string, string> ServerVariables(HttpContext context)
+        private static Dictionary<string, string> ServerVariables(HttpContext context)
         {
             return context.Request?.Headers?.Keys.ToDictionary(k => k, k => context.Request.Headers[k].ToString());
         }
-
     }
 }

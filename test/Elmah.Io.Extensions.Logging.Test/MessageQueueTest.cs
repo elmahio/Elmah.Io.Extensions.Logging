@@ -10,6 +10,7 @@ namespace Elmah.Io.Extensions.Logging.Test
     public class MessageQueueTest
     {
         [Test]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2925:\"Thread.Sleep\" should not be used in tests", Justification = "Need sleep in the test to test message queue")]
         public void CanProcessMessages()
         {
             // Arrange
