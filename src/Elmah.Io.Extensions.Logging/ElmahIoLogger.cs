@@ -102,6 +102,13 @@ namespace Elmah.Io.Extensions.Logging
             // If a property named 'category' was not found in the log message, set the category to the name of the logger.
             if (string.IsNullOrWhiteSpace(createMessage.Category)) createMessage.Category = _name;
 
+            // Store potential EventId in data
+            if (eventId != default)
+            {
+                createMessage.Data.Add(new Item("EventId", eventId.Id.ToString()));
+                if (!string.IsNullOrWhiteSpace(eventId.Name)) createMessage.Data.Add(new Item("EventName", eventId.Name));
+            }
+
             if (exception != null)
             {
                 createMessage.Detail = exception.ToString();

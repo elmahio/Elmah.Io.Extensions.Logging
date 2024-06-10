@@ -169,5 +169,23 @@ namespace Elmah.Io.Extensions.Logging.Test
                     && msg.Form.Any(sv => sv.Key == "formKey" && sv.Value == "formValue")
                     && msg.QueryString.Any(sv => sv.Key == "queryStringKey" && sv.Value == "queryStringValue")));
         }
+
+        [Test]
+        public void CanLogEventId()
+        {
+            // Arrange
+
+            // Act
+            _logger.LogError(new EventId(42, "Answer"), "A message");
+
+            // Assert
+            _queueMock
+                .Received()
+                .AddMessage(Arg.Is<CreateMessage>(msg =>
+                    msg != null
+                    && msg.Data.Any(d => d.Key == "EventId" && d.Value == "42")
+                    && msg.Data.Any(d => d.Key == "EventName" && d.Value == "Answer")));
+
+        }
     }
 }
