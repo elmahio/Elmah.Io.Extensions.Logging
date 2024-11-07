@@ -16,6 +16,5 @@ namespace Microsoft.AspNetCore.Builder
         {
             return app.UseMiddleware<ElmahIoExtensionsLoggingMiddleware>();
         }
-
     }
 }
