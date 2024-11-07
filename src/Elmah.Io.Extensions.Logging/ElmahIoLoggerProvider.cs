@@ -1,6 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
+using Elmah.Io.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
+using static Elmah.Io.Extensions.Logging.UserAgentHelper;
 
 namespace Elmah.Io.Extensions.Logging
 {
@@ -53,6 +58,8 @@ namespace Elmah.Io.Extensions.Logging
                 _messageQueue = new MessageQueueHandler(_options);
 
             _messageQueue.Start();
+
+            CreateInstallation();
         }
 
         /// <inheritdoc/>
@@ -82,6 +89,75 @@ namespace Elmah.Io.Extensions.Logging
         public void SetScopeProvider(IExternalScopeProvider scopeProvider)
         {
             _scopeProvider = scopeProvider;
+        }
+
+        private void CreateInstallation()
+        {
+            try
+            {
+                var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
+                {
+                    WebProxy = _options.WebProxy,
+                    UserAgent = UserAgent(),
+                });
+
+                var logger = new LoggerInfo
+                {
+                    Type = "Elmah.Io.Extensions.Logging",
+                    Properties = [],
+                    ConfigFiles = [],
+                    Assemblies =
+                    [
+                        new AssemblyInfo { Name = "Elmah.Io.Extensions.Logging", Version = GetType().GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version },
+                        new AssemblyInfo { Name = "Elmah.Io.Client", Version = typeof(IElmahioAPI).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version },
+                        new AssemblyInfo { Name = "Microsoft.Extensions.Logging", Version = typeof(ILoggerProvider).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version }
+                    ],
+                };
+
+                var installation = new CreateInstallation
+                {
+                    Type = ApplicationInfoHelper.GetApplicationType(),
+                    Name = _options.Application,
+                    Loggers = [logger]
+                };
+
+                var location = GetType().Assembly.Location;
+                var currentDirectory = Path.GetDirectoryName(location);
+
+                var appsettingsFilePath = Path.Combine(currentDirectory, "appsettings.json");
+                if (File.Exists(appsettingsFilePath))
+                {
+                    var combinedSections = new JObject();
+
+                    var appsettingsContent = File.ReadAllText(appsettingsFilePath);
+                    var appsettingsObject = JObject.Parse(appsettingsContent);
+                    if (appsettingsObject.TryGetValue("Logging", out JToken loggingSection))
+                    {
+                        combinedSections.Add("Logging", loggingSection.DeepClone());
+                    }
+
+                    if (appsettingsObject.TryGetValue("ElmahIo", out JToken elmahIoSection))
+                    {
+                        combinedSections.Add("ElmahIo", elmahIoSection.DeepClone());
+                    }
+
+                    if (combinedSections.HasValues)
+                    {
+                        logger.ConfigFiles.Add(new ConfigFile
+                        {
+                            Name = Path.GetFileName(appsettingsFilePath),
+                            Content = combinedSections.ToString(),
+                            ContentType = "application/json"
+                        });
+                    }
+                }
+
+                api.Installations.Create(_options.LogId.ToString(), installation);
+            }
+            catch
+            {
+                // We don't want to crash the entire application if the installation fails. Carry on.
+            }
         }
     }
 }
