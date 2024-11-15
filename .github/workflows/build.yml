@@ -26,7 +26,11 @@ jobs:
       run: dotnet restore
 
     - name: Check vulnerable NuGet packages
-      uses: elmahio/github-check-vulnerable-nuget-packages-action@v1
+      uses: elmahio/github-check-vulnerable-nuget-packages-action@v2
+      with:
+        projects: |
+          src/Elmah.Io.Extensions.Logging/Elmah.Io.Extensions.Logging.csproj
+          src/Elmah.Io.AspNetCore.ExtensionsLogging/Elmah.Io.AspNetCore.ExtensionsLogging.csproj
 
     - name: Build
       run: dotnet build --configuration Release --no-restore
