@@ -104,7 +104,15 @@ namespace Elmah.Io.Extensions.Logging
                 var logger = new LoggerInfo
                 {
                     Type = "Elmah.Io.Extensions.Logging",
-                    Properties = [],
+                    Properties =
+                    [
+                        new Item("BackgroundQueueSize", _options.BackgroundQueueSize.ToString()),
+                        new Item("BatchPostingLimit", _options.BatchPostingLimit.ToString()),
+                        new Item("IncludeScopes", _options.IncludeScopes.ToString()),
+                        new Item("Period", _options.Period.ToString()),
+                        new Item("Synchronous", _options.Synchronous.ToString()),
+                        new Item("WebProxy", _options.WebProxy?.GetType().FullName ?? ""),
+                    ],
                     ConfigFiles = [],
                     Assemblies =
                     [
