@@ -12,12 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5765
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging", "src\Elmah.Io.Extensions.Logging\Elmah.Io.Extensions.Logging.csproj", "{99357B19-04B9-4FAC-8D3E-51E0CC880372}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{07AEF95F-8EDB-41B5-A581-ABFEFB8B305A}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build.yml = .github\workflows\build.yml
-		README.md = README.md
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0ECA6599-92E4-46B6-9ED4-C2C2028E3404}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Io.Extensions.Logging.Test", "test\Elmah.Io.Extensions.Logging.Test\Elmah.Io.Extensions.Logging.Test.csproj", "{9F210C4D-644E-4F5D-A050-24DF0EF08E3D}"
