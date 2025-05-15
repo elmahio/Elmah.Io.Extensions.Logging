@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Elmah.Io.Client;
@@ -120,6 +121,7 @@ namespace Elmah.Io.Extensions.Logging
                         new AssemblyInfo { Name = "Elmah.Io.Client", Version = typeof(IElmahioAPI).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version },
                         new AssemblyInfo { Name = "Microsoft.Extensions.Logging", Version = typeof(ILoggerProvider).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version }
                     ],
+                    EnvironmentVariables = [],
                 };
 
                 var installation = new CreateInstallation
@@ -160,7 +162,14 @@ namespace Elmah.Io.Extensions.Logging
                     }
                 }
 
-                api.Installations.Create(_options.LogId.ToString(), installation);
+                if (EnvironmentVariablesHelper.TryGetElmahIoAppSettingsEnvironmentVariables(out List<Item> elmahIoVariables)) elmahIoVariables.ForEach(v => logger.EnvironmentVariables.Add(v));
+                if (EnvironmentVariablesHelper.TryGetAspNetCoreEnvironmentVariables(out List<Item> aspNetCoreVariables)) aspNetCoreVariables.ForEach(v => logger.EnvironmentVariables.Add(v));
+                if (EnvironmentVariablesHelper.TryGetDotNetEnvironmentVariables(out List<Item> dotNetVariables)) dotNetVariables.ForEach(v => logger.EnvironmentVariables.Add(v));
+                if (EnvironmentVariablesHelper.TryGetAzureEnvironmentVariables(out List<Item> azureVariables)) azureVariables.ForEach(v => logger.EnvironmentVariables.Add(v));
+
+                _options.OnInstallation?.Invoke(installation);
+
+                api.Installations.CreateAndNotify(_options.LogId, installation);
             }
             catch
             {

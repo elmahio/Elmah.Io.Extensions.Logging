@@ -27,6 +27,14 @@ builder.Logging.AddElmahIo(options =>
 
     // Remove comment on the following line to log through a proxy (in this case Fiddler).
     //options.WebProxy = new WebProxy("localhost", 8888);
+
+    // Enrich installation when notifying elmah.io after launch:
+    //options.OnInstallation = installation =>
+    //{
+    //    installation.Name = "ASP.NET Core 9.0 Application";
+    //    var logger = installation.Loggers.FirstOrDefault(l => l.Type == "Elmah.Io.Extensions.Logging");
+    //    logger?.Properties.Add(new Elmah.Io.Client.Item("Foo", "Bar"));
+    //};
 });
 
 // The elmah.io provider can log any log level, but we recommend only to log warning and up

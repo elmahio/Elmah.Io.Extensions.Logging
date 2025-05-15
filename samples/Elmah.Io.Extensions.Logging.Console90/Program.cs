@@ -16,6 +16,14 @@ services.AddLogging(logging => logging.AddElmahIo(options =>
     //options.BatchPostingLimit = 20;
     //options.BackgroundQueueSize = 200;
     //options.Period = TimeSpan.FromSeconds(1);
+
+    // Enrich installation when notifying elmah.io after launch:
+    //options.OnInstallation = installation =>
+    //{
+    //    installation.Name = "ASP.NET Core 9.0 Application";
+    //    var logger = installation.Loggers.FirstOrDefault(l => l.Type == "Elmah.Io.Extensions.Logging");
+    //    logger?.Properties.Add(new Elmah.Io.Client.Item("Foo", "Bar"));
+    //};
 }));
 
 using (var serviceProvider = services.BuildServiceProvider())

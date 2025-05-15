@@ -30,6 +30,11 @@ namespace Elmah.Io.Extensions.Logging
         /// </summary>
         public Action<CreateMessage> OnMessage { get; set; }
         /// <summary>
+        /// Register an action to be called before creating an installation. Use the OnInstallation
+        /// action to decorate installations with additional information related to your environment.
+        /// </summary>
+        public Action<CreateInstallation> OnInstallation { get; set; }
+        /// <summary>
         /// Specify an action to be called on all (not filtered) messages if communication with the elmah.io API fails.
         /// </summary>
         public Action<CreateMessage, Exception> OnError { get; set; }
