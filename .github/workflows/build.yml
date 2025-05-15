@@ -40,21 +40,21 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
 
     - name: Pack Elmah.Io.Extensions.Logging
-      run: dotnet pack --configuration Release src/Elmah.Io.Extensions.Logging/Elmah.Io.Extensions.Logging.csproj /p:Version=5.2.${{ github.run_number }}
+      run: dotnet pack --configuration Release src/Elmah.Io.Extensions.Logging/Elmah.Io.Extensions.Logging.csproj /p:Version=5.3.${{ github.run_number }}-pre
     - name: Pack Elmah.Io.AspNetCore.ExtensionsLogging
-      run: dotnet pack --configuration Release src/Elmah.Io.AspNetCore.ExtensionsLogging/Elmah.Io.AspNetCore.ExtensionsLogging.csproj /p:Version=5.2.${{ github.run_number }}
+      run: dotnet pack --configuration Release src/Elmah.Io.AspNetCore.ExtensionsLogging/Elmah.Io.AspNetCore.ExtensionsLogging.csproj /p:Version=5.3.${{ github.run_number }}-pre
 
     - name: Install dotnet-validate
       run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
 
     - name: Validate Elmah.Io.Extensions.Logging
-      run: dotnet-validate package local src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.5.2.${{ github.run_number }}.nupkg
+      run: dotnet-validate package local src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.5.3.${{ github.run_number }}-pre.nupkg
     - name: Validate Elmah.Io.AspNetCore.ExtensionsLogging
-      run: dotnet-validate package local src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.5.2.${{ github.run_number }}.nupkg
+      run: dotnet-validate package local src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.5.3.${{ github.run_number }}-pre.nupkg
 
     - name: Push Elmah.Io.Extensions.Logginge to nuget.org
-      run: dotnet nuget push src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.5.2.${{ github.run_number }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.5.3.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
     - name: Push Elmah.Io.AspNetCore.ExtensionsLogging to nuget.org
-      run: dotnet nuget push src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.5.2.${{ github.run_number }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.5.3.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
