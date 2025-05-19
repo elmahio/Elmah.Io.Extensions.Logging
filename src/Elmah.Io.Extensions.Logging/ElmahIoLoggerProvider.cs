@@ -162,7 +162,7 @@ namespace Elmah.Io.Extensions.Logging
                     }
                 }
 
-                // Include environment variables from all possible sources since we don't know in which context Serilog is being executed.
+                // Include environment variables from all possible sources since we don't know in which context Microsoft.Extensions.Logging is being executed.
                 EnvironmentVariablesHelper.GetElmahIoAppSettingsEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
                 EnvironmentVariablesHelper.GetAspNetCoreEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
                 EnvironmentVariablesHelper.GetDotNetEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
