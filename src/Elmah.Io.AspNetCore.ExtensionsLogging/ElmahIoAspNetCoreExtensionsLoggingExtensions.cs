@@ -1,6 +1,8 @@
 ﻿using Elmah.Io.AspNetCore.ExtensionsLogging;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Microsoft.AspNetCore.Builder
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     /// <summary>
     /// Helper for installing the Elmah.Io.AspNetCore.ExtensionsLogging middleware.
