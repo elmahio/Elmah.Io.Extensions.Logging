@@ -96,6 +96,7 @@ namespace Elmah.Io.Extensions.Logging
                 else if (stateProperty.IsCookies(out List<Item> cookies)) createMessage.Cookies = cookies;
                 else if (stateProperty.IsForm(out List<Item> form)) createMessage.Form = form;
                 else if (stateProperty.IsQueryString(out List<Item> queryString)) createMessage.QueryString = queryString;
+                else if (stateProperty.IsDetail(out string detail)) createMessage.Detail = detail;
                 else createMessage.Data.Add(stateProperty.ToItem());
             }
 

@@ -81,6 +81,11 @@ namespace Elmah.Io.Extensions.Logging
             return keyValue.Is("category", out category);
         }
 
+        internal static bool IsDetail(this KeyValuePair<string, object> keyValue, out string detail)
+        {
+            return keyValue.Is("detail", out detail);
+        }
+
         internal static bool IsServerVariables(this KeyValuePair<string, object> keyValue, out List<Item> serverVariables)
         {
             serverVariables = null;
