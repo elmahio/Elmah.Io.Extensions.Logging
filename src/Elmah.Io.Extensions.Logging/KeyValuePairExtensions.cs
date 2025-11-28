@@ -124,7 +124,7 @@ namespace Elmah.Io.Extensions.Logging
 
             if (property.Value is IEnumerable<KeyValuePair<string, object>> properties)
             {
-                result = properties.Select(p => ToItem(p)).ToList();
+                result = [.. properties.Select(p => ToItem(p))];
             }
             else if (property.Value is Dictionary<string, string> dictionary)
             {

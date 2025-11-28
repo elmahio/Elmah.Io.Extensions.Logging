@@ -20,7 +20,7 @@ services.AddLogging(logging => logging.AddElmahIo(options =>
     // Enrich installation when notifying elmah.io after launch:
     //options.OnInstallation = installation =>
     //{
-    //    installation.Name = "ASP.NET Core 9.0 Application";
+    //    installation.Name = "Console .NET 9.0 Application";
     //    var logger = installation.Loggers.FirstOrDefault(l => l.Type == "Elmah.Io.Extensions.Logging");
     //    logger?.Properties.Add(new Elmah.Io.Client.Item("Foo", "Bar"));
     //};

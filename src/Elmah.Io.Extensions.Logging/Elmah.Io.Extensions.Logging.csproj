@@ -7,7 +7,6 @@
     <AssemblyName>Elmah.Io.Extensions.Logging</AssemblyName>
     <PackageId>Elmah.Io.Extensions.Logging</PackageId>
     <PackageTags>Error;Exception;Reporting;Management;Logging;ELMAH;Diagnostics;Tracing;aspnetcore</PackageTags>
-    <PackageIconUrl>https://secure.gravatar.com/avatar/5c4cb3646528821117abde6d2d5ee22d?s=64</PackageIconUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://elmah.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/elmahio/Elmah.Io.Extensions.Logging</RepositoryUrl>
@@ -32,10 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Elmah.Io.Client" Version="[5.3.131,6)" />
+    <PackageReference Include="Elmah.Io.Client" Version="[6.0.133-pre,7)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

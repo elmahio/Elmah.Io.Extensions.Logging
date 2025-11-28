@@ -10,16 +10,16 @@ namespace Elmah.Io.Extensions.Logging.Test
 {
     public class ElmahIoLoggerTest
     {
-        IExternalScopeProvider _scopeProvider;
-        private ICanHandleMessages _queueMock;
-        private ElmahIoLogger _logger;
+        IExternalScopeProvider scopeProvider;
+        private ICanHandleMessages queueMock;
+        private ElmahIoLogger logger;
 
         [SetUp]
         public void SetUp()
         {
-            _queueMock = Substitute.For<ICanHandleMessages>();
-            _scopeProvider = Substitute.For<IExternalScopeProvider>();
-            _logger = new ElmahIoLogger("TestLogger", _queueMock, new ElmahIoProviderOptions(), _scopeProvider);
+            queueMock = Substitute.For<ICanHandleMessages>();
+            scopeProvider = Substitute.For<IExternalScopeProvider>();
+            logger = new ElmahIoLogger("TestLogger", queueMock, new ElmahIoProviderOptions(), scopeProvider);
         }
 
         [Test]
@@ -28,10 +28,10 @@ namespace Elmah.Io.Extensions.Logging.Test
             // Arrange
 
             // Act
-            _logger.LogError(new ApplicationException(), "This is an error with a {property}", "PropertyValue");
+            logger.LogError(new ApplicationException(), "This is an error with a {property}", "PropertyValue");
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg =>
                     msg != null
@@ -46,15 +46,15 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void CanLogWithNoScope()
         {
             // Arrange
-            _scopeProvider
+            scopeProvider
                 .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
                 .Do(x => x.Arg<Action<object, object>>().Invoke(null, null));
 
             // Act
-            _logger.LogInformation("msg");
+            logger.LogInformation("msg");
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && !msg.Data.Any()));
         }
@@ -63,15 +63,15 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void CanLogWithEnumerableScope()
         {
             // Arrange
-            _scopeProvider
+            scopeProvider
                 .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
                 .Do(x => x.Arg<Action<object, object>>().Invoke(new List<KeyValuePair<string, object>> { new("Key", "Value") }, null));
 
             // Act
-            _logger.LogInformation("msg");
+            logger.LogInformation("msg");
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && msg.Data.Any(d => d.Key == "Key" && d.Value == "Value")));
         }
@@ -80,15 +80,15 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void CanLogWithStringScope()
         {
             // Arrange
-            _scopeProvider
+            scopeProvider
                 .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
                 .Do(x => x.Arg<Action<object, object>>().Invoke("Scope", null));
 
             // Act
-            _logger.LogInformation("msg");
+            logger.LogInformation("msg");
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && !msg.Data.Any()));
         }
@@ -98,15 +98,15 @@ namespace Elmah.Io.Extensions.Logging.Test
         public void CanLogWithObjectScope()
         {
             // Arrange
-            _scopeProvider
+            scopeProvider
                 .When(x => x.ForEachScope(Arg.Any<Action<object, object>>(), Arg.Any<object>()))
                 .Do(x => x.Arg<Action<object, object>>().Invoke(new { Hello = "World" }, null));
 
             // Act
-            _logger.LogInformation("msg");
+            logger.LogInformation("msg");
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg => msg.Data != null && msg.Data.Any(d => d.Key == "Hello" && d.Value == "World")));
         }
@@ -133,7 +133,7 @@ namespace Elmah.Io.Extensions.Logging.Test
             var queryString = new Dictionary<string, string> { { "queryStringKey", "queryStringValue" } };
 
             // Act
-            _logger.LogInformation("Info message {method} {version} {url} {user} {type} {statusCode} {source} {hostname} {application} {correlationId} {category} {detail} {serverVariables} {cookies} {form} {queryString}",
+            logger.LogInformation("Info message {method} {version} {url} {user} {type} {statusCode} {source} {hostname} {application} {correlationId} {category} {detail} {serverVariables} {cookies} {form} {queryString}",
                 method,
                 version,
                 url,
@@ -152,7 +152,7 @@ namespace Elmah.Io.Extensions.Logging.Test
                 queryString);
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg =>
                     msg != null
@@ -185,10 +185,10 @@ namespace Elmah.Io.Extensions.Logging.Test
             var message = Guid.NewGuid().ToString();
 
             // Act
-            _logger.LogInformation(new Exception(message), "Info message {detail}", detail);
+            logger.LogInformation(new Exception(message), "Info message {detail}", detail);
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg =>
                     msg != null
@@ -202,10 +202,10 @@ namespace Elmah.Io.Extensions.Logging.Test
             // Arrange
 
             // Act
-            _logger.LogError(new EventId(42, "Answer"), "A message");
+            logger.LogError(new EventId(42, "Answer"), "A message");
 
             // Assert
-            _queueMock
+            queueMock
                 .Received()
                 .AddMessage(Arg.Is<CreateMessage>(msg =>
                     msg != null

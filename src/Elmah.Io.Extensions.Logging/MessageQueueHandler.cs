@@ -10,22 +10,22 @@ namespace Elmah.Io.Extensions.Logging
 {
     internal class MessageQueueHandler(ElmahIoProviderOptions options) : ICanHandleMessages
     {
-        private readonly ElmahIoProviderOptions _options = options;
-        private IElmahioAPI _elmahIoClient;
-        private BlockingCollection<CreateMessage> _messages;
-        private CancellationTokenSource _cancellationTokenSource;
-        private readonly List<CreateMessage> _currentBatch = [];
-        private int _messagesDropped;
+        private readonly ElmahIoProviderOptions options = options;
+        private IElmahioAPI elmahIoClient;
+        private BlockingCollection<CreateMessage> messages;
+        private CancellationTokenSource cancellationTokenSource;
+        private readonly List<CreateMessage> currentBatch = [];
+        private int messagesDropped;
 
         internal MessageQueueHandler(ElmahIoProviderOptions options, IElmahioAPI elmahIoClient) : this(options)
         {
-            _elmahIoClient = elmahIoClient;
+            this.elmahIoClient = elmahIoClient;
         }
 
         public void Start()
         {
-            _messages = new BlockingCollection<CreateMessage>(new ConcurrentQueue<CreateMessage>(), _options.BackgroundQueueSize);
-            _cancellationTokenSource = new CancellationTokenSource();
+            messages = new BlockingCollection<CreateMessage>(new ConcurrentQueue<CreateMessage>(), options.BackgroundQueueSize);
+            cancellationTokenSource = new CancellationTokenSource();
             Task.Run(ProcessLogQueue);
         }
 
@@ -33,7 +33,7 @@ namespace Elmah.Io.Extensions.Logging
         {
             try
             {
-                if (_messages.Count > 0)
+                if (messages.Count > 0)
                 {
                     // Remaining messages in queue. Flush them if possible.
                     ProcessMessages().GetAwaiter().GetResult();
@@ -44,19 +44,19 @@ namespace Elmah.Io.Extensions.Logging
                 // If a TaskCanceledException is thrown while stopping there is not much to do
             }
 
-            _cancellationTokenSource.Cancel();
-            _messages.CompleteAdding();
+            cancellationTokenSource.Cancel();
+            messages.CompleteAdding();
         }
 
         public void AddMessage(CreateMessage message)
         {
-            if (!_messages.IsAddingCompleted)
+            if (!messages.IsAddingCompleted)
             {
                 try
                 {
-                    if (!_messages.TryAdd(message, millisecondsTimeout: 0, cancellationToken: _cancellationTokenSource.Token))
+                    if (!messages.TryAdd(message, millisecondsTimeout: 0, cancellationToken: cancellationTokenSource.Token))
                     {
-                        Interlocked.Increment(ref _messagesDropped);
+                        Interlocked.Increment(ref messagesDropped);
                     }
                 }
                 catch
@@ -68,16 +68,16 @@ namespace Elmah.Io.Extensions.Logging
 
         private async Task WriteMessagesAsync(IEnumerable<CreateMessage> messages, CancellationToken token)
         {
-            if (_elmahIoClient == null)
+            if (elmahIoClient == null)
             {
-                var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
+                var api = ElmahioAPI.Create(options.ApiKey, new ElmahIoOptions
                 {
-                    WebProxy = _options.WebProxy,
+                    WebProxy = options.WebProxy,
                     Timeout = new TimeSpan(0, 0, 30),
                     UserAgent = UserAgent(),
                 });
-                api.Messages.OnMessageFail += (sender, args) => _options.OnError?.Invoke(args.Message, args.Error);
-                _elmahIoClient = api;
+                api.Messages.OnMessageFail += (sender, args) => options.OnError?.Invoke(args.Message, args.Error);
+                elmahIoClient = api;
             }
 
             var bulk = new List<CreateMessage>();
@@ -85,16 +85,16 @@ namespace Elmah.Io.Extensions.Logging
             {
                 bulk.Add(message);
 
-                if (bulk.Count >= _options.BatchPostingLimit)
+                if (bulk.Count >= options.BatchPostingLimit)
                 {
-                    await _elmahIoClient.Messages.CreateBulkAndNotifyAsync(_options.LogId, bulk, token);
+                    await elmahIoClient.Messages.CreateBulkAndNotifyAsync(options.LogId, bulk, token);
                     bulk.Clear();
                 }
             }
 
             if (bulk.Count > 0)
             {
-                await _elmahIoClient.Messages.CreateBulkAndNotifyAsync(_options.LogId, bulk, token);
+                await elmahIoClient.Messages.CreateBulkAndNotifyAsync(options.LogId, bulk, token);
             }
 
         }
@@ -106,40 +106,40 @@ namespace Elmah.Io.Extensions.Logging
 
         private async Task ProcessLogQueue()
         {
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            while (!cancellationTokenSource.IsCancellationRequested)
             {
                 // Process messages
                 await ProcessMessages();
                 // Then wait until next check
-                await IntervalAsync(_options.Period, _cancellationTokenSource.Token);
+                await IntervalAsync(options.Period, cancellationTokenSource.Token);
             }
         }
 
         private async Task ProcessMessages()
         {
-            while (_messages.TryTake(out var message))
+            while (messages.TryTake(out var message))
             {
-                _currentBatch.Add(message);
+                currentBatch.Add(message);
             }
 
-            var messagesDropped = Interlocked.Exchange(ref _messagesDropped, 0);
-            if (messagesDropped != 0)
+            var messagesDroppedExchange = Interlocked.Exchange(ref this.messagesDropped, 0);
+            if (messagesDroppedExchange != 0)
             {
-                _currentBatch.Add(new CreateMessage { Title = $"{messagesDropped} message(s) dropped because of queue size limit. Increase the queue size or decrease logging verbosity to avoid this." });
+                currentBatch.Add(new CreateMessage { Title = $"{messagesDroppedExchange} message(s) dropped because of queue size limit. Increase the queue size or decrease logging verbosity to avoid this." });
             }
 
-            if (_currentBatch.Count > 0)
+            if (currentBatch.Count > 0)
             {
                 try
                 {
-                    await WriteMessagesAsync(_currentBatch, _cancellationTokenSource.Token);
+                    await WriteMessagesAsync(currentBatch, cancellationTokenSource.Token);
                 }
                 catch
                 {
                     // ignored
                 }
 
-                _currentBatch.Clear();
+                currentBatch.Clear();
             }
         }
     }

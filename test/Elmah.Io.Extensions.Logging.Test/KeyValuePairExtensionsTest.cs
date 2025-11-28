@@ -49,7 +49,7 @@ namespace Elmah.Io.Extensions.Logging.Test
             Assert.That(isMatch, Is.True);
             Assert.That(result.Count, Is.EqualTo(2));
             Assert.That(result.First().Key, Is.EqualTo("Hello"));
-            Assert.That(result.First().Value, Is.EqualTo("World"));       
+            Assert.That(result.First().Value, Is.EqualTo("World"));
             Assert.That(result.Last().Key, Is.EqualTo("Foo"));
             Assert.That(result.Last().Value, Is.EqualTo("Bar"));
         }

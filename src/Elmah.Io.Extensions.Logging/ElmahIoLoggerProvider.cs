@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using Elmah.Io.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 using static Elmah.Io.Extensions.Logging.UserAgentHelper;
 
 namespace Elmah.Io.Extensions.Logging
@@ -16,9 +16,9 @@ namespace Elmah.Io.Extensions.Logging
     [ProviderAlias("ElmahIo")]
     public class ElmahIoLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
-        private readonly ElmahIoProviderOptions _options;
-        private readonly ICanHandleMessages _messageQueue;
-        private IExternalScopeProvider _scopeProvider;
+        private readonly ElmahIoProviderOptions options;
+        private readonly ICanHandleMessages messageQueue;
+        private IExternalScopeProvider scopeProvider;
 
         /// <summary>
         /// Create a new instance using the provided options.
@@ -38,27 +38,27 @@ namespace Elmah.Io.Extensions.Logging
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly", Justification = "Properties are on options")]
         public ElmahIoLoggerProvider(string apiKey, Guid logId, ElmahIoProviderOptions options = null)
         {
-            _options = options ?? new ElmahIoProviderOptions();
+            this.options = options ?? new ElmahIoProviderOptions();
 
-            if (!_options.Synchronous && _options.BatchPostingLimit <= 0)
+            if (!this.options.Synchronous && this.options.BatchPostingLimit <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(_options.BatchPostingLimit), $"{nameof(_options.BatchPostingLimit)} must be a positive number.");
+                throw new ArgumentOutOfRangeException(nameof(ElmahIoLoggerProvider.options.BatchPostingLimit), $"{nameof(ElmahIoLoggerProvider.options.BatchPostingLimit)} must be a positive number.");
             }
 
-            if (!_options.Synchronous && _options.Period <= TimeSpan.Zero)
+            if (!this.options.Synchronous && this.options.Period <= TimeSpan.Zero)
             {
-                throw new ArgumentOutOfRangeException(nameof(_options.Period), $"{nameof(_options.Period)} must be longer than zero.");
+                throw new ArgumentOutOfRangeException(nameof(ElmahIoLoggerProvider.options.Period), $"{nameof(ElmahIoLoggerProvider.options.Period)} must be longer than zero.");
             }
 
-            _options.ApiKey = apiKey;
-            _options.LogId = logId;
+            this.options.ApiKey = apiKey;
+            this.options.LogId = logId;
 
-            if (_options.Synchronous)
-                _messageQueue = new SynchronousMessageHandler(_options);
+            if (this.options.Synchronous)
+                messageQueue = new SynchronousMessageHandler(this.options);
             else
-                _messageQueue = new MessageQueueHandler(_options);
+                messageQueue = new MessageQueueHandler(this.options);
 
-            _messageQueue.Start();
+            messageQueue.Start();
 
             CreateInstallation();
         }
@@ -66,7 +66,7 @@ namespace Elmah.Io.Extensions.Logging
         /// <inheritdoc/>
         public ILogger CreateLogger(string categoryName)
         {
-            return new ElmahIoLogger(categoryName, _messageQueue, _options, _scopeProvider);
+            return new ElmahIoLogger(categoryName, messageQueue, options, scopeProvider);
         }
 
         /// <summary>
@@ -83,22 +83,22 @@ namespace Elmah.Io.Extensions.Logging
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            _messageQueue?.Stop();
+            messageQueue?.Stop();
         }
 
         /// <inheritdoc/>
         public void SetScopeProvider(IExternalScopeProvider scopeProvider)
         {
-            _scopeProvider = scopeProvider;
+            this.scopeProvider = scopeProvider;
         }
 
         private void CreateInstallation()
         {
             try
             {
-                var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
+                var api = ElmahioAPI.Create(options.ApiKey, new ElmahIoOptions
                 {
-                    WebProxy = _options.WebProxy,
+                    WebProxy = options.WebProxy,
                     UserAgent = UserAgent(),
                 });
 
@@ -107,12 +107,12 @@ namespace Elmah.Io.Extensions.Logging
                     Type = "Elmah.Io.Extensions.Logging",
                     Properties =
                     [
-                        new Item("BackgroundQueueSize", _options.BackgroundQueueSize.ToString()),
-                        new Item("BatchPostingLimit", _options.BatchPostingLimit.ToString()),
-                        new Item("IncludeScopes", _options.IncludeScopes.ToString()),
-                        new Item("Period", _options.Period.ToString()),
-                        new Item("Synchronous", _options.Synchronous.ToString()),
-                        new Item("WebProxy", _options.WebProxy?.GetType().FullName ?? ""),
+                        new Item("BackgroundQueueSize", options.BackgroundQueueSize.ToString()),
+                        new Item("BatchPostingLimit", options.BatchPostingLimit.ToString()),
+                        new Item("IncludeScopes", options.IncludeScopes.ToString()),
+                        new Item("Period", options.Period.ToString()),
+                        new Item("Synchronous", options.Synchronous.ToString()),
+                        new Item("WebProxy", options.WebProxy?.GetType().FullName ?? ""),
                     ],
                     ConfigFiles = [],
                     Assemblies =
@@ -127,7 +127,7 @@ namespace Elmah.Io.Extensions.Logging
                 var installation = new CreateInstallation
                 {
                     Type = ApplicationInfoHelper.GetApplicationType(),
-                    Name = _options.Application,
+                    Name = options.Application,
                     Loggers = [logger]
                 };
 
@@ -137,26 +137,41 @@ namespace Elmah.Io.Extensions.Logging
                 var appsettingsFilePath = Path.Combine(currentDirectory, "appsettings.json");
                 if (File.Exists(appsettingsFilePath))
                 {
-                    var combinedSections = new JObject();
-
                     var appsettingsContent = File.ReadAllText(appsettingsFilePath);
-                    var appsettingsObject = JObject.Parse(appsettingsContent);
-                    if (appsettingsObject.TryGetValue("Logging", out JToken loggingSection))
+
+                    using var doc = JsonDocument.Parse(appsettingsContent);
+                    using var ms = new MemoryStream();
+                    using var writer = new Utf8JsonWriter(ms, new JsonWriterOptions { Indented = true });
+
+                    var root = doc.RootElement;
+                    writer.WriteStartObject();
+
+                    var wroteAny = false;
+
+                    if (root.TryGetProperty("Logging", out var loggingSection))
                     {
-                        combinedSections.Add("Logging", loggingSection.DeepClone());
+                        writer.WritePropertyName("Logging");
+                        loggingSection.WriteTo(writer);
+                        wroteAny = true;
                     }
 
-                    if (appsettingsObject.TryGetValue("ElmahIo", out JToken elmahIoSection))
+                    if (root.TryGetProperty("ElmahIo", out var elmahIoSection))
                     {
-                        combinedSections.Add("ElmahIo", elmahIoSection.DeepClone());
+                        writer.WritePropertyName("ElmahIo");
+                        elmahIoSection.WriteTo(writer);
+                        wroteAny = true;
                     }
 
-                    if (combinedSections.HasValues)
+                    writer.WriteEndObject();
+                    writer.Flush();
+
+                    if (wroteAny)
                     {
+                        var combinedJson = Encoding.UTF8.GetString(ms.ToArray());
                         logger.ConfigFiles.Add(new ConfigFile
                         {
                             Name = Path.GetFileName(appsettingsFilePath),
-                            Content = combinedSections.ToString(),
+                            Content = combinedJson,
                             ContentType = "application/json"
                         });
                     }
@@ -169,10 +184,9 @@ namespace Elmah.Io.Extensions.Logging
                 EnvironmentVariablesHelper.GetAzureEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
                 EnvironmentVariablesHelper.GetAzureFunctionsEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
 
+                options.OnInstallation?.Invoke(installation);
 
-                _options.OnInstallation?.Invoke(installation);
-
-                api.Installations.CreateAndNotify(_options.LogId, installation);
+                api.Installations.CreateAndNotify(options.LogId, installation);
             }
             catch
             {

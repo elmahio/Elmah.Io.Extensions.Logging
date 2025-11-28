@@ -16,8 +16,8 @@ namespace Elmah.Io.Extensions.Logging
     public class ElmahIoLogger(string name, ICanHandleMessages messageHandler, ElmahIoProviderOptions options, IExternalScopeProvider externalScopeProvider) : ILogger
     {
         private const string OriginalFormatPropertyKey = "{OriginalFormat}";
-        private readonly ElmahIoProviderOptions _options = options;
-        private readonly string _name = name;
+        private readonly ElmahIoProviderOptions options = options;
+        private readonly string name = name;
         private readonly ICanHandleMessages _messageHandler = messageHandler;
         private readonly IExternalScopeProvider _externalScopeProvider = externalScopeProvider;
 
@@ -42,7 +42,7 @@ namespace Elmah.Io.Extensions.Logging
                 Hostname = Hostname(),
                 User = User(),
                 Type = Type(exception),
-                Application = _options.Application,
+                Application = options.Application,
                 Data = [],
             };
 
@@ -52,7 +52,7 @@ namespace Elmah.Io.Extensions.Logging
                 properties = properties.Concat(stateProperties);
             }
 
-            if (_options.IncludeScopes)
+            if (options.IncludeScopes)
             {
                 _externalScopeProvider?.ForEachScope<object>((scope, _) =>
                 {
@@ -101,7 +101,7 @@ namespace Elmah.Io.Extensions.Logging
             }
 
             // If a property named 'category' was not found in the log message, set the category to the name of the logger.
-            if (string.IsNullOrWhiteSpace(createMessage.Category)) createMessage.Category = _name;
+            if (string.IsNullOrWhiteSpace(createMessage.Category)) createMessage.Category = name;
 
             // Store potential EventId in data
             if (eventId != default)
@@ -119,12 +119,12 @@ namespace Elmah.Io.Extensions.Logging
                 }
             }
 
-            if (_options.OnFilter != null && _options.OnFilter(createMessage))
+            if (options.OnFilter != null && options.OnFilter(createMessage))
             {
                 return;
             }
 
-            _options.OnMessage?.Invoke(createMessage);
+            options.OnMessage?.Invoke(createMessage);
 
             _messageHandler.AddMessage(createMessage);
         }
@@ -138,7 +138,7 @@ namespace Elmah.Io.Extensions.Logging
         /// <inheritdoc/>
         public IDisposable BeginScope<TState>(TState state)
         {
-            if (!_options.IncludeScopes || state.Equals(default(TState))) return null;
+            if (!options.IncludeScopes || state.Equals(default(TState))) return null;
             return _externalScopeProvider?.Push(state);
         }
 
