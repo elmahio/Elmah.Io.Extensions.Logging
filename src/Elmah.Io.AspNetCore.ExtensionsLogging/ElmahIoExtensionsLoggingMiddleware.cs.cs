@@ -50,6 +50,9 @@ namespace Elmah.Io.AspNetCore.ExtensionsLogging
         {
             try
             {
+                if (context.Request == null || !context.Request.HasFormContentType) return [];
+                if (context.Request?.ContentType?.StartsWith("multipart/", StringComparison.OrdinalIgnoreCase) == true) return [];
+
                 return context.Request?.Form?.Keys.ToDictionary(k => k, k => context.Request.Form[k].ToString());
             }
             catch (Exception)
