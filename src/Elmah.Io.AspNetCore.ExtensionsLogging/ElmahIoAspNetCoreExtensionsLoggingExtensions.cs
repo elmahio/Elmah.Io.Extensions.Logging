@@ -18,5 +18,31 @@ namespace Microsoft.AspNetCore.Builder
         {
             return app.UseMiddleware<ElmahIoExtensionsLoggingMiddleware>();
         }
+
+#if NET8_0_OR_GREATER
+        /// <summary>
+        /// Disables logging of form values from the HTTP context in the
+        /// Elmah.Io.AspNetCore.ExtensionsLogging middleware. This is useful if you don't want form
+        /// data to be included in the logs (i.e. for sensitive form data or files).
+        /// </summary>
+        public static TBuilder DisableElmahIoFormLogging<TBuilder>(this TBuilder builder, bool includeFormContentType = false) where TBuilder : IEndpointConventionBuilder
+        {
+            builder.WithMetadata(new DisableElmahIoFormLoggingMetadata(includeFormContentType));
+            return builder;
+        }
+#endif
+
+#if NET8_0_OR_GREATER
+        /// <summary>
+        /// Enables logging of multipart form data from the HTTP context. By default, multipart form data
+        /// is not logged because it can result in exceptions when the application also tries to consume 
+        /// the request body as a stream without request buffering being enabled.
+        /// </summary>
+        public static TBuilder OptIntoElmahIoMultipartBodyLogging<TBuilder>(this TBuilder builder) where TBuilder : IEndpointConventionBuilder
+        {
+            builder.WithMetadata(new OptIntoElmahIoMultipartBodyLoggingMetadata());
+            return builder;
+        }
+#endif
     }
 }
