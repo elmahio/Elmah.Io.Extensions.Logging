@@ -60,14 +60,9 @@ jobs:
       if: ${{ github.event_name == 'push' }}
 
     - name: Refresh Bugster
-      shell: pwsh
-      env:
-        FUNCTION_APP_URL: ${{ secrets.FUNCTION_APP_URL }}
-      run: |
-        $repoName = ($env:GITHUB_REPOSITORY -split '/')[1]
-        $json = @{ repository = $repoName } | ConvertTo-Json -Compress
-        curl --fail-with-body -X POST `
-             -H "Content-Type: application/json" `
-             -d "$json" `
-             $env:FUNCTION_APP_URL
-      if: ${{ github.event_name == 'push' }}
+      uses: elmahio/actions/refresh-bugster-repository@v1.2
+      with:
+        signing: ${{ secrets.BUGSTER_SIGNING_KEY }}
+        url: ${{ secrets.FUNCTION_APP_URL }}
+        repository: ${{ github.event.repository.name }}
+      if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
