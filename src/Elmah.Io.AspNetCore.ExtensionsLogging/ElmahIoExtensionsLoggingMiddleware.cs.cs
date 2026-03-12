@@ -77,7 +77,7 @@ namespace Elmah.Io.AspNetCore.ExtensionsLogging
                 if (context.Request?.ContentType?.StartsWith("multipart/", StringComparison.OrdinalIgnoreCase) == true) return [];
 #endif
                 var formData = await context.Request.ReadFormAsync(); // recommended over accessing Request.Form: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-6.0#prefer-readformasync-over-requestform
-                return formData?.Keys.ToDictionary(k => k, k => context.Request.Form[k].ToString()) ?? [];
+                return formData?.ToDictionary(k => k.Key, v => v.Value.ToString()) ?? [];
             }
             catch (Exception)
             {
