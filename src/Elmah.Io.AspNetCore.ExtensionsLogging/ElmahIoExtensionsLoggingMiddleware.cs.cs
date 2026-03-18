@@ -48,27 +48,23 @@ namespace Elmah.Io.AspNetCore.ExtensionsLogging
             return context.Request?.Query?.Keys.ToDictionary(k => k, k => context.Request.Query[k].ToString());
         }
 
-        private async Task<Dictionary<string, string>> Form(HttpContext context)
+        private static async Task<Dictionary<string, string>> Form(HttpContext context)
         {
             try
             {
-                if (context.Request == null || !context.Request.HasFormContentType) return []; // internal logic for HasFormContentType: Content-Type header with "application/x-www-form-urlencoded" or "multipart/form-data"
+                if (!context.Request.HasFormContentType) return []; // internal logic for HasFormContentType: Content-Type header with "application/x-www-form-urlencoded" or "multipart/form-data"
 #if NET8_0_OR_GREATER
-                var endpoint = context.Features.Get<IEndpointFeature>()?.Endpoint;
-                var disableFormLoggingMetadata = endpoint?.Metadata.GetMetadata<IDisableElmahIoFormLoggingMetadata>();
-                if (disableFormLoggingMetadata is not null)
+                var endpoint = context.GetEndpoint();
+                var disableElmahIoFormLoggingMetadata = endpoint?.Metadata.GetMetadata<IDisableElmahIoFormLoggingMetadata>();
+                if (disableElmahIoFormLoggingMetadata is not null)
                 {
-                    if (disableFormLoggingMetadata.IncludeFormContentType)
-                    {
-                        return new Dictionary<string, string> { { "ContentType", context.Request.ContentType ?? "" } };
-                    }
                     return [];
                 }
 
                 if (context.Request.ContentType?.StartsWith("multipart/", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    var optIntoMultipartLoggingMetadata = endpoint?.Metadata.GetMetadata<IOptIntoElmahIoMultipartBodyLoggingMetadata>();
-                    if (optIntoMultipartLoggingMetadata is null)
+                    var enableElmahIoMultipartBodyLoggingMetadata = endpoint?.Metadata.GetMetadata<IEnableElmahIoMultipartBodyLoggingMetadata>();
+                    if (enableElmahIoMultipartBodyLoggingMetadata is null)
                     {
                         return [];
                     }
