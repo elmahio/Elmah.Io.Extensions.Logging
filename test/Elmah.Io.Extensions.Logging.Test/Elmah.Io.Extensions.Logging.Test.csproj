@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Elmah.Io.AspNetCore.ExtensionsLogging\Elmah.Io.AspNetCore.ExtensionsLogging.csproj" />
     <ProjectReference Include="..\..\src\Elmah.Io.Extensions.Logging\Elmah.Io.Extensions.Logging.csproj" />
   </ItemGroup>
 
