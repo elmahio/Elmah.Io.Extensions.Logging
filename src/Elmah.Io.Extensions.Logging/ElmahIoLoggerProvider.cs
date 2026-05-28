@@ -124,6 +124,9 @@ namespace Elmah.Io.Extensions.Logging
                     EnvironmentVariables = [],
                 };
 
+                logger.Assemblies.TryAddAssemblyIfLoaded("Elmah.Io.AspNetCore.ExtensionsLogging");
+                logger.Assemblies.TryAddExtensionAssembliesIfLoaded();
+
                 var installation = new CreateInstallation
                 {
                     Type = ApplicationInfoHelper.GetApplicationType(),
