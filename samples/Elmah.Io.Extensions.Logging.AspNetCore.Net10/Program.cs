@@ -54,6 +54,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseElmahIoExtensionsLogging();
+
 app.UseHttpsRedirection();
 
 app.UseRouting();
