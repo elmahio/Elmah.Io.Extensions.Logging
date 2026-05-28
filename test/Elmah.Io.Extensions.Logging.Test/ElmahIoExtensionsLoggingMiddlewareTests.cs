@@ -92,7 +92,7 @@ namespace Elmah.Io.Extensions.Logging.Test
             context.Request.ReadFormAsync().ThrowsAsync(new IOException("Connection reset"));
 
             // Act & Assert
-            Assert.DoesNotThrowAsync(async () => await middleware.Invoke(context));
+            Assert.DoesNotThrowAsync(new System.Func<Task>(async () => await middleware.Invoke(context)));
 
             logger.Received(1).BeginScope(Arg.Is<Dictionary<string, object>>(dict =>
                 ((Dictionary<string, string>)dict["form"]).Count == 0
