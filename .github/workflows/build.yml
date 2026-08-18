@@ -10,6 +10,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
 
     steps:
     - uses: actions/checkout@v7
@@ -51,11 +53,18 @@ jobs:
     - name: Validate Elmah.Io.AspNetCore.ExtensionsLogging
       run: dotnet-validate package local src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.6.0.${{ github.run_number }}-pre.nupkg
 
+    - name: NuGet login (OIDC → temp API key)
+      uses: NuGet/login@v1
+      id: nuget-login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+      if: ${{ github.event_name == 'push' }}
+
     - name: Push Elmah.Io.Extensions.Logginge to nuget.org
-      run: dotnet nuget push src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.6.0.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Elmah.Io.Extensions.Logging/bin/Release/Elmah.Io.Extensions.Logging.6.0.${{ github.run_number }}-pre.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
     - name: Push Elmah.Io.AspNetCore.ExtensionsLogging to nuget.org
-      run: dotnet nuget push src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.6.0.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Elmah.Io.AspNetCore.ExtensionsLogging/bin/Release/Elmah.Io.AspNetCore.ExtensionsLogging.6.0.${{ github.run_number }}-pre.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
 
     # - name: Refresh Bugster
